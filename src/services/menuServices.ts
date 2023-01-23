@@ -13,5 +13,15 @@ export class MenuServices {
         return menus ;
     }
 
+    async getById(id : number) : Promise<Menu>
+    {
+        const menus = await AppDataSource
+            .createQueryBuilder(Menu, "menu")
+            .where("menu.id = :menuid", { menuid: id })
+            .cache(true)
+            .getMany() ;
+        return menus[0] ;
+    }
+
 
 }
