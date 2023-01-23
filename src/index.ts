@@ -2,6 +2,7 @@ import "reflect-metadata"
 import { AppDataSource } from "./module/clientData"
 import express from 'express';
 import { usersRouter } from "./routes/usersRouter";
+import { menusRouter } from "./routes/menusRouter";
 
 AppDataSource.initialize()
     .then(() => {
@@ -34,8 +35,10 @@ AppDataSource.initialize()
         });
 
         app.use('/api/users', usersRouter);
-        app.use('/api/menus', usersRouter);
+        app.use('/api/menus', menusRouter);
         app.use((req, res, next) => {
+            console.log(req.originalUrl);
+            
             const response = {
                 status: "FAIL",
                 data: null,
