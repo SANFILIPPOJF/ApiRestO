@@ -9,7 +9,7 @@ export class Menu {
     @Column()
     name: string
 
-    @Column()
+    @Column("decimal", { precision: 5, scale: 2 })
     price: number
     
     @OneToMany(() => OrderLine, (line) => line.orderId)
