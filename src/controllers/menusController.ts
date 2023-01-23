@@ -84,4 +84,45 @@ export class MenusController {
             responser.send();
         }
     }
+    async edit(req: Request, res: Response) {
+        const responser = new Responser<Menu>(req, res);
+
+        const menuId = req.params.id;
+        const { name, price } = req.body;
+
+        if (faillingId(menuId))
+        {
+            responser.status = 400 ;
+            responser.message = `${menuId} n'est pas un nombre entier` ;
+            responser.send() ;
+            return ;
+        } 
+
+        if ( faillingString(name) || faillingPrice(price) )
+        {
+            responser.status = 400 ;
+            responser.message = `Structure du body incorrect : { name : string , price : 0 < number <= 999.99 }` ;
+            responser.send() ;
+        } 
+        try {
+            const data = await menuServices.edit(Number(menuId), name, price);
+            if (!data) 
+            {
+                responser.status = 404 ;
+                responser.message = `Ce menu n'existe pas` ;
+                responser.send() ;
+                return ;
+            } 
+
+            responser.status = 200;
+            responser.message = `Modification du menu ${menuId}`;
+            responser.data = data;
+            responser.send();
+        }
+        catch (err: any) {
+            console.log(err.stack)
+            responser.send();
+        }
+
+    }
 }
