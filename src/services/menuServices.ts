@@ -35,4 +35,18 @@ export class MenuServices {
         return menus.raw[0] ;
     }
 
+    async edit( id : number , newName? : string , newPrice? : number)
+    {
+        
+        const menus = await AppDataSource
+            .createQueryBuilder()
+            .update(Menu)
+            .where("id = :menuid", { menuid: id })
+            .set({name : newName, price: newPrice})
+            .returning("*")
+            .execute() ;
+        return menus.raw[0] ;
+    }
+
+
 }
