@@ -1,4 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
+import { Menu } from "./menu"
 import { Order } from "./order"
 
 @Entity()
@@ -7,15 +8,12 @@ export class OrderLine {
     id: number
 
     @Column()
-    menuId: number
-/*
-    @Column()
-    orderId: number
-*/
-    @Column()
     multiplicator: number
 
     @ManyToOne(() => Order, (order) => order.id)
     orderId: Order
+
+    @ManyToOne(() => Menu, (menu) => menu.id)
+    menuId: Menu
 
 }
