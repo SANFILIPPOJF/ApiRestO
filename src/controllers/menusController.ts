@@ -24,4 +24,38 @@ export class MenusController {
             responser.send();
         }
     }
+    async getById(req: Request, res: Response) {
+        const responser = new Responser<Menu>(req, res);
+
+        const menuId = req.params.id;
+        
+        if (faillingId(menuId))
+        {
+            responser.status = 400 ;
+            responser.message = `${menuId} n'est pas un nombre entier` ;
+            responser.send() ;
+            return ;
+        } 
+        try {
+            const data = await menuServices.getById(Number(menuId));
+
+            if (!data) 
+            {
+                responser.status = 404 ;
+                responser.message = `Ce menu n'existe pas` ;
+                responser.send() ;
+                return ;
+            } 
+
+            responser.status = 200;
+            responser.message = `Récupération du menu ${data.id}`;
+            responser.data = data;
+            responser.send();
+        }
+        catch (err: any) {
+            console.log(err.stack)
+            responser.send();
+        }
+    }
+
 }
