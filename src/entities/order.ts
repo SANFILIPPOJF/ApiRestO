@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { User } from "./user"
 
 @Entity()
 export class Order {
@@ -7,13 +8,16 @@ export class Order {
 
     @Column()
     restoId: number
-
+/*
     @Column()
     userId: number
-
+*/
     @Column()
     createdAt: Date
 
     @Column()
     servedAt: Date
+
+    @ManyToOne(() => User, (user) => user.id)
+    userId: User
 }
