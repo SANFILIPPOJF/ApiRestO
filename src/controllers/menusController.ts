@@ -58,4 +58,30 @@ export class MenusController {
         }
     }
 
+    async new(req: Request, res: Response) {
+        const responser = new Responser<Menu>(req, res);
+
+        const { name, price } = req.body;
+
+        if ( faillingString(name) || faillingPrice(price) )
+        {
+            responser.status = 400 ;
+            responser.message = `Structure du body incorrect : { name : string , price : 0 < number <= 999.99 }` ;
+            responser.send() ;
+        } 
+        
+
+        try {
+            const data = await menuServices.new(name, price);
+
+            responser.status = 200;
+            responser.message = `Création du menu ${data.id}`;
+            responser.data = data;
+            responser.send();
+        }
+        catch (err: any) {
+            console.log(err.stack)
+            responser.send();
+        }
+    }
 }
