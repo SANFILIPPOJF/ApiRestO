@@ -1,62 +1,17 @@
-import { Menu } from "src/entities/menu";
-import { AppDataSource } from "src/module/clientData";
+import { Menu } from "../entities/menu";
+import { AppDataSource } from "../module/clientData";
 
 
 export class MenuServices {
 
-    async getAll()
+    async getAll() : Promise<Menu[]>
     {
-        
-        await AppDataSource
-        .createQueryBuilder()
-        .insert()
-        .into(Menu)
-        .values([])
-        .execute()
+        const menus = await AppDataSource
+            .createQueryBuilder(Menu, "menu")
+            .cache(true)
+            .getMany() ;
+        return menus ;
     }
 
-    async getById()
-    {
-        
-        await AppDataSource
-        .createQueryBuilder()
-        .insert()
-        .into(Menu)
-        .values([])
-        .execute()
-    }
-
-    async new()
-    {
-        
-        await AppDataSource
-        .createQueryBuilder()
-        .insert()
-        .into(Menu)
-        .values([{name : "mayo"}])
-        .execute()
-    }
-
-    async edit()
-    {
-        
-        await AppDataSource
-        .createQueryBuilder()
-        .insert()
-        .into(Menu)
-        .values([{name : "mayo"}])
-        .execute()
-    }
-
-    async delete()
-    {
-        
-        await AppDataSource
-        .createQueryBuilder()
-        .insert()
-        .into(Menu)
-        .values([{name : "mayo"}])
-        .execute()
-    }
 
 }
