@@ -2,7 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 import { Order } from "./order"
 
 @Entity()
-export class User {
+export class Users {
     @PrimaryGeneratedColumn()
     id: number
 
