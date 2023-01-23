@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
-import { OrderLine } from "./ordeLine"
+import { OrderLine } from "./orderLine"
 import { Resto } from "./resto"
-import { User } from "./user"
+import { Users } from "./user"
 
 @Entity()
 export class Order {
@@ -14,8 +14,8 @@ export class Order {
     @Column()
     servedAt: Date
 
-    @ManyToOne(() => User, (user) => user.id)
-    userId: User
+    @ManyToOne(() => Users, (user) => user.id)
+    userId: Users
 
     @ManyToOne(() => Resto, (resto) => resto.id)
     restoId: Resto

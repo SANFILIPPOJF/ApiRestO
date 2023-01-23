@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
-import { OrderLine } from "./ordeLine"
+import { OrderLine } from "./orderLine"
 
 @Entity()
 export class Menu {
