@@ -1,11 +1,12 @@
 //import { Client } from 'pg';        // Client
 import * as dotenv from 'dotenv';   // Client
 import "reflect-metadata"
-import { Menu } from 'src/entities/menu';
-import { OrderLine } from 'src/entities/ordeLine';
-import { Order } from 'src/entities/order';
-import { Resto } from 'src/entities/resto';
-import { User } from 'src/entities/user';
+import { OrderLine } from '../entities/orderLine';
+import { Menu } from '../entities/menu';
+
+import { Order } from '../entities/order';
+import { Resto } from '../entities/resto';
+import { Users } from '../entities/user';
 import { DataSource } from 'typeorm';
 dotenv.config()                     // Client
 
@@ -20,7 +21,7 @@ export const AppDataSource = new DataSource({
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    entities: [User,Menu,OrderLine,Order,Resto],
-    synchronize: false,
+    entities: [Users,Menu,OrderLine,Order,Resto],
+    synchronize: true,
     logging: false,
 })
