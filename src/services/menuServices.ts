@@ -48,5 +48,16 @@ export class MenuServices {
         return menus.raw[0] ;
     }
 
+    async delete(id : number) : Promise<Number>
+    {
+        const menus = await AppDataSource
+            .createQueryBuilder(Menu, "menu")
+            .delete()
+            .from(Menu)
+            .where("id = :menuid", { menuid: id })
+            .execute() ;
+        
+        return menus.affected || 0
+    }
 
 }
