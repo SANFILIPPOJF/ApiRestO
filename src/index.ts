@@ -34,6 +34,7 @@ AppDataSource.initialize()
         });
 
         app.use('/api/users', usersRouter);
+        app.use('/api/menus', usersRouter);
         app.use((req, res, next) => {
             const response = {
                 status: "FAIL",
