@@ -30,3 +30,17 @@ export function faillingString(message : any = undefined){
 export function faillingBool(done : any = undefined){
     return done === undefined || typeof done != typeof Boolean()
 }
+
+/** 
+ * Vérification de l'**INCOMPATIBILITE** de l'objet en tant que prix de menu. 
+ * * Renvoie **true** si l'objet rempli une de ces conditions :
+ *   * n'est pas convertible en nombre
+ *   * n'est pas 0 < id <= 999.99
+ *   * est un booleen
+ */
+export function faillingPrice(id : any = undefined){
+    return Number.isNaN(Number(id)) || 
+        Number(id) > 999.99 || 
+        Number(id) <= 0 || 
+        typeof id === typeof Boolean()
+}
