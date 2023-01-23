@@ -48,7 +48,7 @@ export class MenuServices {
         return menus.raw[0] ;
     }
 
-    async delete(id : number) : Promise<Number>
+    async delete(id : number) : Promise<number>
     {
         const menus = await AppDataSource
             .createQueryBuilder(Menu, "menu")
