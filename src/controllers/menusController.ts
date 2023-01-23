@@ -125,4 +125,37 @@ export class MenusController {
         }
 
     }
+    async delete(req: Request, res: Response) {
+        const responser = new Responser<number>(req, res);
+
+        const menuId = req.params.id;
+
+        if (faillingId(menuId))
+        {
+            responser.status = 400 ;
+            responser.message = `${menuId} n'est pas un nombre entier` ;
+            responser.send() ;
+            return ;
+        } 
+
+        try {
+            const data = await menuServices.delete(Number(menuId));
+            if (data === 0) 
+            {
+                responser.status = 404 ;
+                responser.message = `Ce menu n'existe pas` ;
+                responser.send() ;
+                return ;
+            } 
+
+            responser.status = 200;
+            responser.message = `Suppression du menu ${menuId}`;
+            responser.data = data;
+            responser.send();
+        }
+        catch (err: any) {
+            console.log(err.stack)
+            responser.send();
+        }
+    }
 }
