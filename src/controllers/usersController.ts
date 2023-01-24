@@ -5,20 +5,24 @@ import { AppDataSource } from '../module/clientData';
 import { UsersService } from '../services/usersService';
 import { faillingString } from '../module/faillingTest';
 import { stringLength as sl } from '../constants/backUp';
+import * as jwt from 'jsonwebtoken';                        // token
+import * as dotenv from 'dotenv';                           // token
+import { TDataPartialUser, TDataToken } from '../types/types';
 
+dotenv.config()                                             // token
+const accessTokenSecret = process.env.SECRET_TOKEN!;       // token
 const usersService = new UsersService();
 export class UsersController {
     async register(req: Request, res: Response) {
-        const responser = new Responser<Users>(req, res);
-        const name: string = req.body.name;
-        const password: string = req.body.password;
-        if (faillingString(name,sl.name.min,sl.name.max)) {
+        const responser = new Responser<TDataPartialUser>(req, res);
+        const { name, password } = req.body;
+        if (faillingString(name, sl.name.min, sl.name.max)) {
             responser.status = 400;
             responser.message = `${name} n'est pas au bon format (chaine de caractere comprise entre ${sl.name.min} et ${sl.name.max} caracteres)`;
             responser.send();
             return;
         }
-        if (faillingString(password,sl.password.min,sl.password.max)) {
+        if (faillingString(password, sl.password.min, sl.password.max)) {
             responser.status = 400;
             responser.message = `Votre mot de passe n'est pas au bon format (chaine de caractere comprise entre ${sl.password.min} et ${sl.password.max} caracteres)`;
             responser.send();
@@ -34,22 +38,55 @@ export class UsersController {
             }
             const data = await usersService.addUser(name, password);
             responser.status = 200;
-                responser.message = `${name} bien enregistré`;
-                responser.data = data;
-                responser.send();
+            responser.message = `${name} bien enregistré`;
+            responser.data = {
+                id: data.id,
+                name: data.name,
+                admin_lvl: data.admin_lvl
+            };
+            responser.send();
 
-        }catch (err: any) {
+        } catch (err: any) {
             console.log(err.stack)
             responser.send();
         }
     }
 
     async login(req: Request, res: Response) {
-        const name: string = req.body.name;
-        const password: string = req.body.password;
-        const data = await usersService.getUserByName(name);
+        const responser = new Responser<TDataToken>(req, res);
+        const { name, password } = req.body;
+        if (faillingString(name) || faillingString(password)) {
+            responser.status = 400;
+            responser.message = `Structure du body incorrect : { name : string , password : string }`;
+            responser.send();
+            return;
+        }
 
+        try {
+            const data = await usersService.getUserByName(name);
+            if (!data || data.password != password) {
+                responser.status = 401;
+                responser.message = `Username ou password incorrect`;
+                responser.send();
+                return;
+            }
 
+            const token = { id: data.id, admin_lvl: data.admin_lvl }
+
+            responser.status = 200;
+            responser.message = `Connection de ${name}`;
+            responser.data = {
+                id: data.id,
+                admin_lvl: data.admin_lvl,
+                name: data.name,
+                token: jwt.sign(token, accessTokenSecret!)
+            };
+            responser.send();
+
+        } catch (err: any) {
+            console.log(err)
+            responser.send();
+        }
     }
 
 
