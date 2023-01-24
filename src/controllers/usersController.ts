@@ -8,6 +8,7 @@ import { stringLength as sl } from '../constants/backUp';
 import * as jwt from 'jsonwebtoken';                        // token
 import * as dotenv from 'dotenv';                           // token
 import { TDataPartialUser, TDataToken } from '../types/types';
+import * as bcrypt from 'bcrypt';
 
 dotenv.config()                                             // token
 const accessTokenSecret = process.env.SECRET_TOKEN!;       // token
@@ -28,28 +29,29 @@ export class UsersController {
             responser.send();
             return;
         }
-        try {
-            const userExist = await usersService.getUserByName(name);
-            if (userExist) {
-                responser.status = 400;
-                responser.message = `${name} existe déjà`;
+        bcrypt.hash(password, 10, async function (err, hash) {
+            try {
+                const userExist = await usersService.getUserByName(name);
+                if (userExist) {
+                    responser.status = 400;
+                    responser.message = `${name} existe déjà`;
+                    responser.send();
+                    return;
+                }
+                const data = await usersService.addUser(name, hash);
+                responser.status = 200;
+                responser.message = `${name} bien enregistré`;
+                responser.data = {
+                    id: data.id,
+                    name: data.name,
+                    admin_lvl: data.admin_lvl
+                };
                 responser.send();
-                return;
+            } catch (err: any) {
+                console.log(err.stack)
+                responser.send();
             }
-            const data = await usersService.addUser(name, password);
-            responser.status = 200;
-            responser.message = `${name} bien enregistré`;
-            responser.data = {
-                id: data.id,
-                name: data.name,
-                admin_lvl: data.admin_lvl
-            };
-            responser.send();
-
-        } catch (err: any) {
-            console.log(err.stack)
-            responser.send();
-        }
+        })
     }
 
     async login(req: Request, res: Response) {
@@ -64,29 +66,46 @@ export class UsersController {
 
         try {
             const data = await usersService.getUserByName(name);
-            if (!data || data.password != password) {
+            console.log(data);
+            
+            if (!data) {
                 responser.status = 401;
                 responser.message = `Username ou password incorrect`;
                 responser.send();
                 return;
             }
+            bcrypt.compare(password, data.password, function (err, result) {
 
-            const token = { id: data.id, admin_lvl: data.admin_lvl }
+                
+                if(!result){
+                    responser.status = 401;
+                    responser.message = `Username ou password incorrect`;
+                    responser.send();
+                    return;
+                }
 
-            responser.status = 200;
-            responser.message = `Connection de ${name}`;
-            responser.data = {
-                id: data.id,
-                admin_lvl: data.admin_lvl,
-                name: data.name,
-                token: jwt.sign(token, accessTokenSecret!)
-            };
-            responser.send();
+                const token = {
+                    id: data.id,
+                    admin_lvl: data.admin_lvl
+                }
+                
+                responser.status = 200;
+                responser.message = `Connection de ${name}`;
+                responser.data = {
+                    id: data.id,
+                    admin_lvl: data.admin_lvl,
+                    name: data.name,
+                    token: jwt.sign(token, accessTokenSecret!)
+                };
+                responser.send();
+            })
+
 
         } catch (err: any) {
             console.log(err)
             responser.send();
         }
+
     }
 
 

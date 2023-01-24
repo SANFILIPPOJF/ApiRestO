@@ -10,3 +10,8 @@ export type TDataPartialUser = {
     name: string,
     admin_lvl: number
 };
+
+export type TToken = {
+    id: number,
+    admin_lvl: number
+}
