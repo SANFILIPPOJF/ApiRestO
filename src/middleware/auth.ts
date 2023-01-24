@@ -1,8 +1,8 @@
 import * as jwt from 'jsonwebtoken';
 import {Request,Response} from 'express';
 import * as dotenv from 'dotenv';
-import { Responser } from 'src/module/Responser';
-import { TToken } from 'src/types/types';
+import { Responser } from '../module/Responser';
+import { TToken } from '../types/types';
 
 dotenv.config();
 
