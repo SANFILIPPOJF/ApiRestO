@@ -1,10 +1,10 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 import { OrderLine } from "./orderLine"
 import { Resto } from "./resto"
 import { Users } from "./user"
 
 @Entity()
-export class Order {
+export class Order extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
 
