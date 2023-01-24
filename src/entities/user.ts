@@ -12,10 +12,10 @@ export class Users {
     @Column()
     password: string
 
-    @Column()
-    adminLvl: number
+    @Column({default: 0})
+    admin_lvl: number
     
-    @OneToMany(() => Order, (order) => order.userId)
+    @OneToMany(() => Order, (order) => order.user_id)
     orders: Order[]
 
 }

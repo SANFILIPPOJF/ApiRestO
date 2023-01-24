@@ -9,6 +9,6 @@ export class Resto {
     @Column()
     city: string
     
-    @OneToMany(() => Order, (order) => order.restoId)
+    @OneToMany(() => Order, (order) => order.resto_id)
     orders: Order[]
 }

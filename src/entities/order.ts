@@ -9,17 +9,17 @@ export class Order {
     id: number
 
     @Column()
-    createdAt: Date
+    created_at: Date
 
     @Column()
-    servedAt: Date
+    served_at: Date
 
     @ManyToOne(() => Users, (user) => user.id)
-    userId: Users
+    user_id: Users
 
     @ManyToOne(() => Resto, (resto) => resto.id)
-    restoId: Resto
+    resto_id: Resto
     
-    @OneToMany(() => OrderLine, (line) => line.orderId)
+    @OneToMany(() => OrderLine, (line) => line.order_id)
     lines: OrderLine[]
 }

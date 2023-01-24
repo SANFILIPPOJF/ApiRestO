@@ -12,6 +12,6 @@ export class Menu {
     @Column("decimal", { precision: 5, scale: 2 })
     price: number
     
-    @OneToMany(() => OrderLine, (line) => line.orderId)
+    @OneToMany(() => OrderLine, (line) => line.order_id)
     lines: OrderLine[]
 }

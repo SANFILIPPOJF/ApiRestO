@@ -11,9 +11,9 @@ export class OrderLine {
     multiplicator: number
 
     @ManyToOne(() => Order, (order) => order.id)
-    orderId: Order
+    order_id: Order
 
     @ManyToOne(() => Menu, (menu) => menu.id)
-    menuId: Menu
+    menu_id: Menu
 
 }
