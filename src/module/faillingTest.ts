@@ -6,7 +6,7 @@
  *   * n'est pas un entier
  *   * est un booleen
  */
-export function faillingId(id : any){
+export function faillingId(id: any) {
     return Number.isNaN(Number(id)) || Number(id) % 1 !== 0 || typeof id === typeof Boolean()
 }
 
@@ -16,9 +16,15 @@ export function faillingId(id : any){
  * * Renvoie **true** si l'objet rempli une de ces conditions :
  *   * est undefined
  *   * n'est pas de type string
+ *   * si la longueur de la chaine est inferieur au minimum souhaité (defaut = 1)
+ *   * si la longueur de la chaine est supérieur à l'eventuelle longueur maximum souhaitée
  */
-export function faillingString(message : any = undefined){
-    return message === undefined  || typeof message != typeof String()
+export function faillingString(message: any = undefined, minLength: number=1, maxLength?: number): boolean {
+    const test = message === undefined || typeof message != typeof String() || message.length < minLength;
+    if (maxLength!==undefined) {
+        return test || message.length > maxLength 
+    }
+    return test
 }
 
 /** 
@@ -27,7 +33,7 @@ export function faillingString(message : any = undefined){
  *   * est undefined
  *   * n'est pas de type Boolean
  */
-export function faillingBool(done : any = undefined){
+export function faillingBool(done: any = undefined) {
     return done === undefined || typeof done != typeof Boolean()
 }
 
@@ -38,9 +44,9 @@ export function faillingBool(done : any = undefined){
  *   * n'est pas 0 < id <= 999.99
  *   * est un booleen
  */
-export function faillingPrice(id : any = undefined){
-    return Number.isNaN(Number(id)) || 
-        Number(id) > 999.99 || 
-        Number(id) <= 0 || 
+export function faillingPrice(id: any = undefined) {
+    return Number.isNaN(Number(id)) ||
+        Number(id) > 999.99 ||
+        Number(id) <= 0 ||
         typeof id === typeof Boolean()
 }
