@@ -1,6 +1,5 @@
 
 import { Menu } from "../entities/menu";
-import { AppDataSource } from "../module/clientData";
 
 
 export class MenuServices {
