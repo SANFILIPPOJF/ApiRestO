@@ -15,11 +15,11 @@ export class Order extends BaseEntity {
     served_at: Date | null
 
     @ManyToOne(() => Users, (user) => user.id)
-    user_id: number
+    user: Users
 
     @ManyToOne(() => Resto, (resto) => resto.id)
-    resto_id: number
+    resto: Resto
     
     @OneToMany(() => OrderLine, (line) => line.order_id)
-    lines: number[]
+    lines: OrderLine[]
 }
