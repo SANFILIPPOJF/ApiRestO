@@ -3,6 +3,7 @@ import { AppDataSource } from "./module/clientData"
 import express from 'express';
 import { usersRouter } from "./routes/usersRouter";
 import { menusRouter } from "./routes/menusRouter";
+import { restosRouter } from "./routes/restosRouter";
 
 AppDataSource.initialize()
     .then(() => {
@@ -36,6 +37,7 @@ AppDataSource.initialize()
 
         app.use('/api/users', usersRouter);
         app.use('/api/menus', menusRouter);
+        app.use('/api/restos', restosRouter)
         app.use((req, res, next) => {
             console.log(req.originalUrl);
             
