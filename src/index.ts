@@ -4,6 +4,8 @@ import express from 'express';
 import { usersRouter } from "./routes/usersRouter";
 import { menusRouter } from "./routes/menusRouter";
 import { restosRouter } from "./routes/restosRouter";
+import { linesRouter } from "./routes/linesRouter";
+import { ordersRouter } from "./routes/ordersRouter";
 
 AppDataSource.initialize()
     .then(() => {
@@ -37,7 +39,9 @@ AppDataSource.initialize()
 
         app.use('/api/users', usersRouter);
         app.use('/api/menus', menusRouter);
-        app.use('/api/restos', restosRouter)
+        app.use('/api/restos', restosRouter);
+        app.use('/api/lines/', linesRouter);
+        app.use('/api/orders/', ordersRouter);
         app.use((req, res, next) => {
             console.log(req.originalUrl);
             
