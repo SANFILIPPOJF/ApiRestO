@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { MenuServices } from '../services/menuServices';
+import { MenuServices } from '../services/menusServices';
 import { Menu } from '../entities/menu';
 import { Responser } from '../module/Responser';
 import { faillingId, faillingPrice, faillingString } from '../module/faillingTest';

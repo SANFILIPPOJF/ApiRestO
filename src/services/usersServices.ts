@@ -1,7 +1,7 @@
 import { Users } from "../entities/user";
 import { AppDataSource } from "../module/clientData";
 
-export class UsersService {
+export class UsersServices {
     async getUserByName(name: string): Promise<Users | null> {
         return await Users.findOneBy({ name: name })
     }

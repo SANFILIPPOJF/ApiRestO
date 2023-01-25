@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Responser } from '../module/Responser';
 import { faillingId, faillingString } from '../module/faillingTest';
-import { RestosServices } from '../services/restosService';
+import { RestosServices } from '../services/restosServices';
 import { Resto } from '../entities/resto';
 
 

@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { Responser } from '../module/Responser';
 import { Users } from '../entities/user';
 import { AppDataSource } from '../module/clientData';
-import { UsersService } from '../services/usersService';
+import { UsersServices } from '../services/usersServices';
 import { faillingString } from '../module/faillingTest';
 import { stringLength as sl } from '../constants/backUp';
 import * as jwt from 'jsonwebtoken';                        // token
@@ -12,7 +12,7 @@ import * as bcrypt from 'bcrypt';
 
 dotenv.config()                                             // token
 const accessTokenSecret = process.env.SECRET_TOKEN!;       // token
-const usersService = new UsersService();
+const usersServices = new UsersServices();
 export class UsersController {
     async register(req: Request, res: Response) {
         const responser = new Responser<TDataPartialUser>(req, res);
@@ -31,14 +31,14 @@ export class UsersController {
         }
         bcrypt.hash(password, 10, async function (err, hash) {
             try {
-                const userExist = await usersService.getUserByName(name);
+                const userExist = await usersServices.getUserByName(name);
                 if (userExist) {
                     responser.status = 400;
                     responser.message = `${name} existe déjà`;
                     responser.send();
                     return;
                 }
-                const data = await usersService.addUser(name, hash);
+                const data = await usersServices.addUser(name, hash);
                 responser.status = 200;
                 responser.message = `${name} bien enregistré`;
                 responser.data = {
@@ -65,7 +65,7 @@ export class UsersController {
         }
 
         try {
-            const data = await usersService.getUserByName(name);
+            const data = await usersServices.getUserByName(name);
             console.log(data);
             
             if (!data) {
