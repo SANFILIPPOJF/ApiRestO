@@ -2,7 +2,7 @@ import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "t
 import { Menu } from "./menu"
 import { Order } from "./order"
 
-@Entity()
+@Entity("orderlines")
 export class OrderLine extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number

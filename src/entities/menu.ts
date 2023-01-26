@@ -1,7 +1,7 @@
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 import { OrderLine } from "./orderLine"
 
-@Entity()
+@Entity("menus")
 export class Menu  extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number

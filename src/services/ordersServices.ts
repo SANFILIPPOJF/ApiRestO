@@ -1,12 +1,15 @@
 
+import { Users } from "../entities/user";
 import { Order } from "../entities/order";
+import { Resto } from "../entities/resto";
 
 
 export class OrdersServices {
 
     async getAll() : Promise<Order[]>
     {
-        return await Order.find()
+        const orders = await Order.find({relations : { resto : true,lines : true}})
+        return orders
     }
 
     async getById(id : number) : Promise<Order | null>
@@ -17,9 +20,24 @@ export class OrdersServices {
     async new(userId : number,restoId : number) : Promise<Order>
     {
         const order = new Order() ;
-        order.user_id = userId 
-        order.resto_id = restoId
-        return await order.save();
+        const user = await Users.findOneBy({ id: userId })
+        if (user) order.user = user
+        const resto = await Resto.findOneBy({ id: userId })
+        if (resto) order.resto = resto
+        await order.save()
+        return [ ...await Order.find(
+            {
+                select : {user : {
+                    id : true,
+                    name : true ,
+                    admin_lvl : true
+                }},
+                where :{ id: order.id },
+                relations : {
+                    user : true ,
+                    resto : true
+                }
+            })][0]
     }
 
     async edit( id : number , served : boolean) : Promise<Order | null>

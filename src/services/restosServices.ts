@@ -2,7 +2,8 @@ import { Resto } from "../entities/resto";
 
 export class RestosServices {
     async getAllRestos(): Promise<Resto[]> {
-        return await Resto.find()
+        const resto = await Resto.find({relations :{orders : true}})
+        return resto
     }
 
     async getRestoById(id: number): Promise<Resto | null> {

@@ -1,7 +1,7 @@
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 import { Order } from "./order"
 
-@Entity()
+@Entity("users")
 export class Users extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
@@ -15,7 +15,7 @@ export class Users extends BaseEntity {
     @Column({default: 0})
     admin_lvl: number
     
-    @OneToMany(() => Order, (order) => order.user_id)
+    @OneToMany(() => Order, (order) => order.user)
     orders: Order[]
 
 }
