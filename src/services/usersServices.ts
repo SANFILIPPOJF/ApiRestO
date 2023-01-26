@@ -17,8 +17,19 @@ export class UsersServices {
             })
     }
 
-    async getDataById(){
-    
+    async getDataById(userId: number){
+        const orders = await Users.findOne(
+            {
+                relations: {
+                    orders:{
+                        lines: {menu: true}
+                    },
+                },
+                where : {
+                    id : userId
+                }
+            })
+        return orders
     }
 
     async addUser(name: string, hash: string) : Promise<Users> {

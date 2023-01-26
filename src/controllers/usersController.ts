@@ -5,13 +5,37 @@ import { faillingString } from '../module/faillingTest';
 import { stringLength as sl } from '../constants/backUp';
 import * as jwt from 'jsonwebtoken';                        // token
 import * as dotenv from 'dotenv';                           // token
-import { TDataPartialUser, TDataToken } from '../types/types';
+import { TDataPartialUser, TDataToken, TUserData } from '../types/types';
 import * as bcrypt from 'bcrypt';
 
 dotenv.config()                                             // token
 const accessTokenSecret = process.env.SECRET_TOKEN!;       // token
 const usersServices = new UsersServices();
 export class UsersController {
+
+    async getById(req: Request, res: Response) {
+        const responser = new Responser<TUserData>(req, res);
+        const userId = req.body.userId;
+
+        try {
+            const userData = await usersServices.getDataById(userId);
+            if (!userData) {
+                responser.status = 400;
+                responser.message = `User absent de la base de données`;
+                responser.send();
+                return;
+            }
+            console.log(userData);
+            responser.status = 200;
+            responser.message = `données de ${userData.name} récupérée(s)`;
+            responser.data = userData
+            responser.send();
+            return userData
+        } catch (err: any) {
+            console.log(err.stack)
+            responser.send();
+        }
+    }
     async register(req: Request, res: Response) {
         const responser = new Responser<TDataPartialUser>(req, res);
         const { name, password } = req.body;
@@ -65,7 +89,7 @@ export class UsersController {
         try {
             const data = await usersServices.getUserByName(name);
             console.log(data);
-            
+
             if (!data) {
                 responser.status = 401;
                 responser.message = `Username ou password incorrect`;
@@ -74,8 +98,8 @@ export class UsersController {
             }
             bcrypt.compare(password, data.password, function (err, result) {
 
-                
-                if(!result){
+
+                if (!result) {
                     responser.status = 401;
                     responser.message = `Username ou password incorrect`;
                     responser.send();
@@ -86,7 +110,7 @@ export class UsersController {
                     id: data.id,
                     admin_lvl: data.admin_lvl
                 }
-                
+
                 responser.status = 200;
                 responser.message = `Connection de ${name}`;
                 responser.data = {
