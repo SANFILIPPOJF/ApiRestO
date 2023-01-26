@@ -11,9 +11,9 @@ export class OrderLine extends BaseEntity {
     multiplicator: number
 
     @ManyToOne(() => Order, (order) => order.id)
-    order_id: Order
+    order: Order
 
     @ManyToOne(() => Menu, (menu) => menu.id)
-    menu_id: Menu
+    menu: Menu
 
 }

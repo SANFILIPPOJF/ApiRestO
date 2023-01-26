@@ -20,6 +20,6 @@ export class Order extends BaseEntity {
     @ManyToOne(() => Resto, (resto) => resto.id)
     resto: Resto
     
-    @OneToMany(() => OrderLine, (line) => line.order_id)
+    @OneToMany(() => OrderLine, (line) => line.order)
     lines: OrderLine[]
 }

@@ -12,6 +12,6 @@ export class Menu  extends BaseEntity {
     @Column("decimal", { precision: 5, scale: 2 })
     price: number
     
-    @OneToMany(() => OrderLine, (line) => line.order_id)
+    @OneToMany(() => OrderLine, (line) => line.id)
     lines: OrderLine[]
 }

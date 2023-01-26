@@ -9,7 +9,7 @@ export class Users extends BaseEntity {
     @Column()
     name: string
 
-    @Column()
+    @Column({select : false})
     password: string
 
     @Column({default: 0})
