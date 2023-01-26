@@ -9,11 +9,12 @@ import { faillingBool, faillingId, faillingPrice, faillingString } from '../modu
 const ordersServices = new OrdersServices()
 const restosServices = new RestosServices()
 export class OrdersController {
-
+/*
     async getFullById(req: Request, res: Response){
         const responser = new Responser<Order>(req, res);
         responser.data?.lines
-    }
+    }*/
+
     async getAll(req: Request, res: Response) {
 
         const responser = new Responser<Order[]>(req, res);
@@ -31,8 +32,27 @@ export class OrdersController {
             responser.send();
         }
     }
+    async getAllByUserId(req: Request, res: Response) {
+        const responser = new Responser<Order[]>(req, res);
+        const {userId} = req.body
+
+        try {
+            const data = await ordersServices.getAllByUserId(userId);
+
+            responser.status = 200;
+            responser.message = `Récupération de toutes les commandes`;
+            responser.data = data;
+            responser.send();
+        }
+        catch (err: any) {
+            console.log(err.stack)
+            responser.send();
+        }
+    }
+
     async getById(req: Request, res: Response) {
         const responser = new Responser<Order>(req, res);
+        const { userId, adminLvl } = req.body
 
         const orderId = req.params.id;
         
@@ -53,6 +73,13 @@ export class OrdersController {
                 responser.send() ;
                 return ;
             } 
+            if (data.user.id !== userId && adminLvl <2) 
+            {
+                responser.status = 400 ;
+                responser.message = `Cette commande ne vous appartient pas` ;
+                responser.send() ;
+                return ;
+            }
 
             responser.status = 200;
             responser.message = `Récupération de la commande ${data.id}`;
@@ -77,12 +104,20 @@ export class OrdersController {
         }
 
         try {
-            const verify = await restosServices.getRestoById(restoId) ;
-            if (!verify){
+            const verifyResto = await restosServices.getRestoById(restoId) ;
+            if (!verifyResto){
                 responser.status = 400 ;
                 responser.message = `Ce resto n'existe pas` ;
                 responser.send() ;
                 return ;
+            }
+            const oldOrder = await ordersServices.onStatus1(userId)
+            if (oldOrder)
+            {
+                responser.status = 200;
+                responser.message = `Une commande est déjà ouverte`;
+                responser.data = oldOrder;
+                responser.send();
             }
 
             const data = await ordersServices.new(userId , restoId );

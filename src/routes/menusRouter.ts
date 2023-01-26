@@ -6,9 +6,11 @@ export const menusRouter = express.Router();
 
 const menusController = new MenusController();
 
+/** DONE */
 /** Route de récupération des menus */
 menusRouter.get('/', menusController.getAll)
 
+/** OPTION */
 /** Route de récupération d'un menu */
 menusRouter.get('/:id', menusController.getById)
 

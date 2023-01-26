@@ -5,8 +5,8 @@
 * se logger
 
 # Client (loggé)
-- voir ses commandes et leur statut
-- creer une commande (s'il n'y en a pas deja en cours) (statut = 1)
+* voir ses commandes et leur statut    // order => getAllByUserId
+* creer une commande (s'il n'y en a pas deja en cours) (statut = 1)
     - ajouter une ligne a une commande
     - modifier une ligne de commande
     - supprimer une ligne de commande
