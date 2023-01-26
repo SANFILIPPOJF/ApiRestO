@@ -19,6 +19,6 @@
 * servir une commande (statut = 4)
 
 # Gestionnaire (loggé adminLvl 2)
-- CRUD des restaurants
-- CRUD des menus
+* CRUD des restaurants
+* CRUD des menus
 - changer le niveau d'admin

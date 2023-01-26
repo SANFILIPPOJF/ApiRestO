@@ -1,4 +1,6 @@
 import express from 'express';
+import { adminLvl2 } from '../middleware/adminLvl2';
+import { authenticateJWT } from '../middleware/auth';
 import { RestosController } from '../controllers/restosController';
 
 export const restosRouter = express.Router();
@@ -12,8 +14,8 @@ restosRouter.get('/', restosController.getAll)
 restosRouter.get('/:param', restosController.getBy)
 
 
-restosRouter.post('/', restosController.add)
+restosRouter.post('/', authenticateJWT , adminLvl2 , restosController.add)
 
-restosRouter.put('/:id', restosController.edit)
+restosRouter.put('/:id', authenticateJWT , adminLvl2 , restosController.edit)
 
-restosRouter.delete('/:id', restosController.delete)
+restosRouter.delete('/:id', authenticateJWT , adminLvl2 , restosController.delete)
