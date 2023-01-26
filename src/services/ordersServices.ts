@@ -8,7 +8,29 @@ export class OrdersServices {
 
     async getAll() : Promise<Order[]>
     {
-        const orders = await Order.find({relations : { resto : true,lines : true}})
+        const orders = await Order.find(
+            {
+                relations : { 
+                    resto : true,
+                    lines : {
+                        menu : true
+                    }
+                }})
+        return orders
+    }
+
+    async getValidateByRestoId() : Promise<Order[]>
+    {
+        const orders = await Order.find(
+            {
+
+                relations : {
+                    user : true ,
+                    resto : true,
+                    lines : {}
+                }
+            }
+        ) ;
         return orders
     }
 
@@ -20,11 +42,15 @@ export class OrdersServices {
     async new(userId : number,restoId : number) : Promise<Order>
     {
         const order = new Order() ;
+
         const user = await Users.findOneBy({ id: userId })
         if (user) order.user = user
+
         const resto = await Resto.findOneBy({ id: userId })
         if (resto) order.resto = resto
+
         await order.save()
+        
         return [ ...await Order.find(
             {
                 select : {user : {
@@ -35,7 +61,8 @@ export class OrdersServices {
                 where :{ id: order.id },
                 relations : {
                     user : true ,
-                    resto : true
+                    resto : true,
+                    lines : true
                 }
             })][0]
     }
