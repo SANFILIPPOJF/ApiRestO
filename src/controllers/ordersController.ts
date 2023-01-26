@@ -123,7 +123,7 @@ export class OrdersController {
             const data = await ordersServices.new(userId , restoId );
 
             responser.status = 200;
-            responser.message = `Création du menu ${data.id}`;
+            responser.message = `Création de la commande ${data.id}`;
             responser.data = data;
             responser.send();
         }
@@ -165,6 +165,77 @@ export class OrdersController {
             responser.send();
         }
 
+    }
+    async addMenu(req: Request, res: Response) {
+        const responser = new Responser<Order>(req, res);
+        const menuId = req.params.idMenu;
+        const {userId,mult} = req.body;
+        
+        const multiplicator = faillingId(mult) ? 1 : Number(mult)
+
+        if (faillingId(menuId))
+        {
+            responser.status = 400 ;
+            responser.message = `${menuId} n'est pas un nombre entier` ;
+            responser.send() ;
+            return ;
+        } 
+        
+        try {
+            const data = await ordersServices.addMenu(userId,Number(menuId),multiplicator);
+            if (!data) 
+            {
+                responser.status = 404 ;
+                responser.message = `Cette commande n'existe pas` ;
+                responser.send() ;
+                return ;
+            } 
+
+            responser.status = 200;
+            responser.message = `Ajout Menu ${menuId} à la commande ${data.id}`;
+            responser.data = data;
+            responser.send();
+        }
+        catch (err: any) {
+            console.log(err.stack)
+            responser.send();
+        }
+    }
+
+    async supMenu(req: Request, res: Response) {
+        const responser = new Responser<Order>(req, res);
+        const menuId = req.params.idMenu;
+        const {userId,mult} = req.body;
+        
+        const multiplicator = faillingId(mult) ? 1 : Number(mult)
+
+        if (faillingId(menuId))
+        {
+            responser.status = 400 ;
+            responser.message = `${menuId} n'est pas un nombre entier` ;
+            responser.send() ;
+            return ;
+        } 
+        
+        try {
+            const data = await ordersServices.supMenu(userId,Number(menuId),multiplicator);
+            if (!data) 
+            {
+                responser.status = 404 ;
+                responser.message = `Cette commande n'existe pas` ;
+                responser.send() ;
+                return ;
+            } 
+
+            responser.status = 200;
+            responser.message = `Retrait du Menu ${menuId} à la commande ${data.id}`;
+            responser.data = data;
+            responser.send();
+        }
+        catch (err: any) {
+            console.log(err.stack)
+            responser.send();
+        }
     }
     async delete(req: Request, res: Response) {
         const responser = new Responser<number>(req, res);

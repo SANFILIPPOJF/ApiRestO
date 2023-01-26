@@ -100,24 +100,54 @@ export class OrdersServices {
         return await order.save()
     }
 
-    async addMenu(userId : number , multiplicator : number , menuId : number) {
+    async addMenu(userId : number , menuId : number, multiplicator : number  ) {
         const currentOrder = await this.onStatus1(userId)
 
         if (currentOrder){
             let add = false
-            currentOrder.lines
-            .filter(item => item.menu.id === menuId)
-            .forEach(item => {
-                item.multiplicator += 1
+            const curItem = currentOrder.lines.find(item => item.menu.id === menuId) 
+            if (curItem) {
+                curItem.multiplicator += multiplicator
+                await curItem.save()
                 add = true
-            })
+            }
+
+            
             if (!add){
                 const newLine = new OrderLine()
-                const targetMenu = Menu.findOneBy({id : menuId})
-                //////////////////////////////////////////////////
+                newLine.multiplicator = multiplicator
+                const targetMenu = await Menu.findOneBy({id : menuId})
+                if (targetMenu) {
+                    newLine.menu = targetMenu;
+                }
+
+                //newLine.order = currentOrder ;
+                currentOrder.lines.push(newLine)
+                await newLine.save()
+            }
+            await currentOrder.save()
+        }
+        return currentOrder
+    }
+
+    async supMenu(userId : number , menuId : number, multiplicator : number  ) {
+        const currentOrder = await this.onStatus1(userId)
+
+        if (currentOrder){
+            const curItem = currentOrder.lines.find(item => item.menu.id === menuId)
+            if (curItem){
+                curItem.multiplicator -= multiplicator
+                
+                if (curItem.multiplicator <= 0 ) {
+                    await curItem.remove()
+                }
+                else
+                {
+                    await curItem.save()
+                }
             }
         }
-        
+        return await this.onStatus1(userId)
     }
 
     async edit(id: number, served: boolean): Promise<Order | null> {

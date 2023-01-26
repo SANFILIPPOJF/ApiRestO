@@ -27,6 +27,12 @@ ordersRouter.get('/:id', authenticateJWT, ordersController.getById)
 /** Route de création d'une commande */
 ordersRouter.post('/', authenticateJWT , ordersController.new)
 
+/** Route d'ajout d'un menu à une commande */
+ordersRouter.put('/addMenu/:idMenu', authenticateJWT , ordersController.addMenu)
+
+/** Route de suppresion d'un menu à une commande */
+ordersRouter.put('/supMenu/:idMenu', authenticateJWT , ordersController.supMenu)
+
 /** Route de modification d'une commande */
 ordersRouter.put('/:id', authenticateJWT , ordersController.edit)
 
