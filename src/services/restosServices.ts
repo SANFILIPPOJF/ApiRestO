@@ -6,7 +6,8 @@ export class RestosServices {
     }
 
     async getRestoById(id: number): Promise<Resto | null> {
-        return await Resto.findOneBy({ id: id })
+        const resto = await Resto.findOneBy({ id: id })
+        return resto
     }
 
     async getRestoByCity(city: string): Promise<Resto | null> {

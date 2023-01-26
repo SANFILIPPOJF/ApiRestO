@@ -1,7 +1,5 @@
-import express, { Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { Responser } from '../module/Responser';
-import { Users } from '../entities/user';
-import { AppDataSource } from '../module/clientData';
 import { UsersServices } from '../services/usersServices';
 import { faillingString } from '../module/faillingTest';
 import { stringLength as sl } from '../constants/backUp';

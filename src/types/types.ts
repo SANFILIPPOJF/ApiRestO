@@ -1,3 +1,5 @@
+import { OrderLine } from "../entities/orderLine";
+
 export type TDataToken = {
     id: number,
     admin_lvl: number,
