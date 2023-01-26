@@ -14,6 +14,11 @@ export class Users extends BaseEntity {
 
     @Column({default: 0})
     admin_lvl: number
+    /**
+     * 0 : Client
+     * 1 : Caisse
+     * 2 : Admin
+     */
     
     @OneToMany(() => Order, (order) => order.user)
     orders: Order[]
