@@ -19,13 +19,13 @@ export class Order extends BaseEntity {
     @Column({default : new Date(),nullable : false})
     created_at: Date
 
-    @Column({ type: 'date', nullable : true })
+    @Column({ type: 'timestamptz', nullable : true })
     validated_at: Date | null
 
-    @Column({ type: 'date', nullable : true })
+    @Column({ type: 'timestamptz', nullable : true })
     checked_at: Date | null
 
-    @Column({ type: 'date', nullable : true })
+    @Column({ type: 'timestamptz', nullable : true })
     served_at: Date | null
 
     @ManyToOne(() => Users, (user) => user.id)

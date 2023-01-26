@@ -135,7 +135,7 @@ export class OrdersController {
     
     async edit(req: Request, res: Response) {
         const responser = new Responser<Order>(req, res);
-        const status  = req.body.status ;
+        const { status , userId , adminLvl }  = req.body ;
         const orderId = req.params.id   ;
 
         if (faillingId(orderId) || faillingId(status))
@@ -146,18 +146,40 @@ export class OrdersController {
             return ;
         }
         try {
-            const data = await ordersServices.edit(Number(orderId) , status);
-            if (!data) 
+            const verifyOrder = await ordersServices.getById(Number(orderId));
+            if (!verifyOrder) 
             {
                 responser.status = 404 ;
                 responser.message = `Cette commande n'existe pas` ;
                 responser.send() ;
                 return ;
             } 
+            if (verifyOrder.user.id !== userId && adminLvl == 0) 
+            {
+                responser.status = 400 ;
+                responser.message = `Cette commande n'est pas à vous` ;
+                responser.send() ;
+                return ;
+            } 
+            if (verifyOrder.status === 4 ) 
+            {
+                responser.status = 400 ;
+                responser.message = `Cette commande commande à déjà été servie` ;
+                responser.send() ;
+                return ;
+            } 
+            if (verifyOrder.status > 1 && adminLvl == 0 ) 
+            {
+                responser.status = 400 ;
+                responser.message = `Vous ne pouvais plus modifier cette commande` ;
+                responser.send() ;
+                return ;
+            } 
+            const data = await ordersServices.edit(Number(orderId) , status);
 
             responser.status = 200;
             responser.message = `Modification de la commande ${orderId}`;
-            responser.data = data;
+            responser.data = data!;
             responser.send();
         }
         catch (err: any) {

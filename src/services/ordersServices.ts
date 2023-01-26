@@ -4,6 +4,7 @@ import { Order } from "../entities/order";
 import { Resto } from "../entities/resto";
 import { OrderLine } from "../entities/orderLine";
 import { Menu } from "../entities/menu";
+import { Timestamp } from "typeorm";
 
 
 export class OrdersServices {
@@ -159,36 +160,37 @@ export class OrdersServices {
         if (order && !order.served_at) {
             switch (status) {
                 case 0:
-                    order.remove();
+                    order.status=0;
+                    await order.save();
+                    await order.remove();
                     break;
                 case 1:
                     order.status=1;
                     order.validated_at=null;
                     order.checked_at=null;
-                    order.save();
+                    await order.save();
                     break;
                 case 2:
                     order.status=2;
-                    order.validated_at=new Date();
+                    order.validated_at=new Date(Date.now()) ;
                     order.checked_at=null;
-                    order.save();
+                    await order.save();
                     break;
                 case 3:
                     order.status=3;
-                    order.checked_at=new Date();
-                    order.save();
+                    if (!order.validated_at) {
+                        order.validated_at=new Date(Date.now()) ;
+                    }
+                    order.checked_at=new Date(Date.now()) ;
+                    await order.save();
+                    break;
                 default:
+                    order.served_at=new Date(Date.now()) ;
+                    await order.save();
                     break;
             }
-/*             if (status===) {
-                order.served_at = new Date()
-            } */
-/*             else {
-                order.served_at = null
-            } */
-            return await order.save();
         }
-        return null;
+        return order;
     }
 
     async delete(id: number): Promise<number> {
