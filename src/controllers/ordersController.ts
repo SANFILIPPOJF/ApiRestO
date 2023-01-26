@@ -5,9 +5,15 @@ import { Order } from '../entities/order';
 import { Responser } from '../module/Responser';
 import { faillingBool, faillingId, faillingPrice, faillingString } from '../module/faillingTest';
 
+
 const ordersServices = new OrdersServices()
 const restosServices = new RestosServices()
 export class OrdersController {
+
+    async getFullById(req: Request, res: Response){
+        const responser = new Responser<Order>(req, res);
+        responser.data?.lines
+    }
     async getAll(req: Request, res: Response) {
 
         const responser = new Responser<Order[]>(req, res);

@@ -7,13 +7,13 @@ export class OrderLine extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column()
+    @Column({default: 1})
     multiplicator: number
 
     @ManyToOne(() => Order, (order) => order.id)
-    order_id: Order
+    order_id: number
 
     @ManyToOne(() => Menu, (menu) => menu.id)
-    menu_id: Menu
+    menu_id: number
 
 }

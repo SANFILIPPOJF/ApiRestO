@@ -8,6 +8,14 @@ export class Order extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
 
+    @Column({default : 1, nullable: false})
+    status: number
+    /*  0: supprimée annulée ;
+        1: en cours ;
+        2: validée (par le client);
+        3: prise en compte (restaurant);
+        4: servie; */
+
     @Column({default : new Date(),nullable : false})
     created_at: Date
 
@@ -21,5 +29,5 @@ export class Order extends BaseEntity {
     resto_id: number
     
     @OneToMany(() => OrderLine, (line) => line.order_id)
-    lines: number[]
+    lines: OrderLine[]
 }
