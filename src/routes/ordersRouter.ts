@@ -10,7 +10,6 @@ const ordersController = new OrdersController();
 ordersRouter.get('/full/:id', ordersController.getFullById)
 */
 
-
 /** DONE */
 /** Route de récupération des commandes */
 ordersRouter.get('/', authenticateJWT ,adminLvl2, ordersController.getAll)

@@ -5,8 +5,9 @@ import { faillingString } from '../module/faillingTest';
 import { stringLength as sl } from '../constants/backUp';
 import * as jwt from 'jsonwebtoken';                        // token
 import * as dotenv from 'dotenv';                           // token
-import { TDataPartialUser, TDataToken, TUserData } from '../types/types';
+import { TDataPartialUser, TDataToken } from '../types/types';
 import * as bcrypt from 'bcrypt';
+import { Users } from 'src/entities/user';
 
 dotenv.config()                                             // token
 const accessTokenSecret = process.env.SECRET_TOKEN!;       // token
@@ -14,11 +15,11 @@ const usersServices = new UsersServices();
 export class UsersController {
 
     async getById(req: Request, res: Response) {
-        const responser = new Responser<TUserData>(req, res);
-        const userId = req.body.userId;
+        const responser = new Responser<Users>(req, res);
+        const userId = req.body.userId!;
 
         try {
-            const userData = await usersServices.getDataById(userId);
+            const userData = await usersServices.getDataById(userId)!;
             if (!userData) {
                 responser.status = 400;
                 responser.message = `User absent de la base de données`;

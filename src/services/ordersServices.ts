@@ -149,16 +149,43 @@ export class OrdersServices {
         }
         return await this.onStatus1(userId)
     }
-
-    async edit(id: number, served: boolean): Promise<Order | null> {
+    /*  0: supprimée annulée ;
+        1: en cours ;
+        2: validée (par le client);
+        3: prise en compte (restaurant);
+        4: servie; */
+    async edit(id: number, status: number): Promise<Order | null> {
         const order = await Order.findOneBy({ id: id })
-        if (order !== null) {
-            if (served) {
+        if (order && !order.served_at) {
+            switch (status) {
+                case 0:
+                    order.remove();
+                    break;
+                case 1:
+                    order.status=1;
+                    order.validated_at=null;
+                    order.checked_at=null;
+                    order.save();
+                    break;
+                case 2:
+                    order.status=2;
+                    order.validated_at=new Date();
+                    order.checked_at=null;
+                    order.save();
+                    break;
+                case 3:
+                    order.status=3;
+                    order.checked_at=new Date();
+                    order.save();
+                default:
+                    break;
+            }
+/*             if (status===) {
                 order.served_at = new Date()
-            }
-            else {
+            } */
+/*             else {
                 order.served_at = null
-            }
+            } */
             return await order.save();
         }
         return null;

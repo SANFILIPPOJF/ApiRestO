@@ -135,18 +135,18 @@ export class OrdersController {
     
     async edit(req: Request, res: Response) {
         const responser = new Responser<Order>(req, res);
-        const served  = req.body.served ;
+        const status  = req.body.status ;
         const orderId = req.params.id   ;
 
-        if (faillingId(orderId) || faillingBool(served))
+        if (faillingId(orderId) || faillingId(status))
         {
             responser.status = 400 ;
-            responser.message = `Stucture incorrecte : /${orderId} : integer  { served : ${served} n'est pas un boolean }` ;
+            responser.message = `Stucture incorrecte : /${orderId} : integer  { status : ${status} n'est pas un nombre entier }` ;
             responser.send() ;
             return ;
-        } 
+        }
         try {
-            const data = await ordersServices.edit(Number(orderId) , served);
+            const data = await ordersServices.edit(Number(orderId) , status);
             if (!data) 
             {
                 responser.status = 404 ;

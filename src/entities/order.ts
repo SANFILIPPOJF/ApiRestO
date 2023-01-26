@@ -20,6 +20,12 @@ export class Order extends BaseEntity {
     created_at: Date
 
     @Column({ type: 'date', nullable : true })
+    validated_at: Date | null
+
+    @Column({ type: 'date', nullable : true })
+    checked_at: Date | null
+
+    @Column({ type: 'date', nullable : true })
     served_at: Date | null
 
     @ManyToOne(() => Users, (user) => user.id)
