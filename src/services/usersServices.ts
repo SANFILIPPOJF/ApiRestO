@@ -1,5 +1,5 @@
 import { Users } from "../entities/user";
-import { AppDataSource } from "../module/clientData";
+
 
 export class UsersServices {
     async getUserByName(name: string): Promise<Users | null> {

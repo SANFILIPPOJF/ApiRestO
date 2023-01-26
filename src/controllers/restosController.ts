@@ -57,7 +57,8 @@ export class RestosController {
         
         try {
             const data = await restosServices.getRestoById(Number(restoId));
-
+            console.log(data?.orders);
+            
             if (!data) {
                 responser.status = 404;
                 responser.message = `Ce resto n'existe pas`;

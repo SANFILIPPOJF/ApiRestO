@@ -7,7 +7,7 @@ export class OrderLine extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column()
+    @Column({default: 1})
     multiplicator: number
 
     @ManyToOne(() => Order, (order) => order.id)

@@ -6,6 +6,8 @@ export const ordersRouter = express.Router();
 
 const ordersController = new OrdersController();
 
+/** Route de récupération d'une commande complete*/
+ordersRouter.get('/full/:id', ordersController.getFullById)
 
 /** Route de récupération des commandes */
 ordersRouter.get('/', ordersController.getAll)
