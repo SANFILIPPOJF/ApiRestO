@@ -24,7 +24,7 @@ export class LinesController {
         }
         try {
             if (!await ordersServices.getById(orderId) ) {
-                responser.status = 400 ;
+                responser.status = 404 ;
             responser.message = `order ${orderId} n'existe pas` ;
             responser.send() ;
             return ;
@@ -56,7 +56,7 @@ export class LinesController {
         try {
             const data = await linesServices.add(order_id, menu_id, multiplicator);
 
-            responser.status = 200;
+            responser.status = 201;
             responser.message = `Création de la ligne de commande ${data.id}`;
             responser.data = data;
             responser.send();

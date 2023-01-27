@@ -75,7 +75,7 @@ export class OrdersController {
             } 
             if (data.user.id !== userId && adminLvl <2) 
             {
-                responser.status = 400 ;
+                responser.status = 403 ;
                 responser.message = `Cette commande ne vous appartient pas` ;
                 responser.send() ;
                 return ;
@@ -106,7 +106,7 @@ export class OrdersController {
         try {
             const verifyResto = await restosServices.getRestoById(restoId) ;
             if (!verifyResto){
-                responser.status = 400 ;
+                responser.status = 404 ;
                 responser.message = `Ce resto n'existe pas` ;
                 responser.send() ;
                 return ;
@@ -114,7 +114,7 @@ export class OrdersController {
             const oldOrder = await ordersServices.onStatus1(userId)
             if (oldOrder)
             {
-                responser.status = 200;
+                responser.status = 409;
                 responser.message = `Une commande est déjà ouverte`;
                 responser.data = oldOrder;
                 responser.send();
@@ -122,7 +122,7 @@ export class OrdersController {
 
             const data = await ordersServices.new(userId , restoId );
 
-            responser.status = 200;
+            responser.status = 201;
             responser.message = `Création de la commande ${data.id}`;
             responser.data = data;
             responser.send();
@@ -156,21 +156,21 @@ export class OrdersController {
             } 
             if (verifyOrder.user.id !== userId && adminLvl == 0) 
             {
-                responser.status = 400 ;
+                responser.status = 403 ;
                 responser.message = `Cette commande n'est pas à vous` ;
                 responser.send() ;
                 return ;
             } 
             if (verifyOrder.status === 4 ) 
             {
-                responser.status = 400 ;
-                responser.message = `Cette commande commande à déjà été servie` ;
+                responser.status = 403 ;
+                responser.message = `Cette commande à déjà été servie` ;
                 responser.send() ;
                 return ;
             } 
             if (verifyOrder.status > 1 && adminLvl == 0 ) 
             {
-                responser.status = 400 ;
+                responser.status = 403 ;
                 responser.message = `Vous ne pouvais plus modifier cette commande` ;
                 responser.send() ;
                 return ;
@@ -213,7 +213,7 @@ export class OrdersController {
                 return ;
             } 
 
-            responser.status = 200;
+            responser.status = 201;
             responser.message = `Ajout Menu ${menuId} à la commande ${data.id}`;
             responser.data = data;
             responser.send();

@@ -74,7 +74,7 @@ export class MenusController {
         try {
             const data = await menuServices.new(name, price);
 
-            responser.status = 200;
+            responser.status = 201;
             responser.message = `Création du menu ${data.id}`;
             responser.data = data;
             responser.send();

@@ -15,7 +15,7 @@ export const authenticateJWT = (req: Request, res: Response, next: () => void) =
         const token = authHeader.split(' ')[1];
         jwt.verify(token, accessTokenSecret, (err, token) => {
             if (err) {
-                responser.status = 400;
+                responser.status = 401;
                 responser.message = `User doit etre connecté`;
                 responser.send();
                 return;
@@ -29,7 +29,7 @@ export const authenticateJWT = (req: Request, res: Response, next: () => void) =
 
         });
     } else {
-        responser.status = 400;
+        responser.status = 401;
         responser.message = `User doit etre connecté`;
         responser.send();
     }

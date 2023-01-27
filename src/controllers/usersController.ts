@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 import { Responser } from '../module/Responser';
 import { UsersServices } from '../services/usersServices';
-import { faillingString } from '../module/faillingTest';
+import { faillingId, faillingString } from '../module/faillingTest';
 import { stringLength as sl } from '../constants/backUp';
 import * as jwt from 'jsonwebtoken';                        // token
 import * as dotenv from 'dotenv';                           // token
 import { TDataPartialUser, TDataToken } from '../types/types';
 import * as bcrypt from 'bcrypt';
-import { Users } from 'src/entities/user';
+import { Users } from '../entities/user';
 
 dotenv.config()                                             // token
 const accessTokenSecret = process.env.SECRET_TOKEN!;       // token
@@ -21,7 +21,7 @@ export class UsersController {
         try {
             const userData = await usersServices.getDataById(userId)!;
             if (!userData) {
-                responser.status = 400;
+                responser.status = 404;
                 responser.message = `User absent de la base de données`;
                 responser.send();
                 return;
@@ -56,13 +56,13 @@ export class UsersController {
             try {
                 const userExist = await usersServices.getUserByName(name);
                 if (userExist) {
-                    responser.status = 400;
+                    responser.status = 409;
                     responser.message = `${name} existe déjà`;
                     responser.send();
                     return;
                 }
                 const data = await usersServices.addUser(name, hash);
-                responser.status = 200;
+                responser.status = 202;
                 responser.message = `${name} bien enregistré`;
                 responser.data = {
                     id: data.id,
@@ -112,7 +112,7 @@ export class UsersController {
                     admin_lvl: data.admin_lvl
                 }
 
-                responser.status = 200;
+                responser.status = 202;
                 responser.message = `Connection de ${name}`;
                 responser.data = {
                     id: data.id,
@@ -128,8 +128,39 @@ export class UsersController {
             console.log(err)
             responser.send();
         }
-
     }
 
+        async changeAdminLvl(req: Request, res: Response) {
+            const responser = new Responser<Users>(req, res);
+            const userLvl = req.params.lvl;
+            const idToUpgrade = req.params.idToUpgrade;
+
+            if (faillingId(userLvl) || faillingId(idToUpgrade) || Number(userLvl) > 2) {
+                responser.status = 400;
+                responser.message = `Structure incorrecte : users/:idToUpgrade : number /:userLvl : number `;
+                responser.send();
+                return;
+            }
+            
+            try {
+                const user = await usersServices.upgradeAdminLvl(Number(idToUpgrade),Number(userLvl));
+                
+                if(!user){
+                    responser.status = 404;
+                    responser.message = `Ce User n'existe pas`;
+                    responser.send();
+                    return;
+                }
+
+                responser.status = 200;
+                responser.message = `nouveau niveau admin de ${user.name} est ${user.admin_lvl}`;
+                responser.data = user;
+                responser.send();
+
+            } catch (err: any) {
+                console.log(err.stack)
+                responser.send();
+            }
+        }
 
 }
