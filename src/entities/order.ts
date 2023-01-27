@@ -28,7 +28,6 @@ export class Order extends BaseEntity {
 
     /** 
      * Etat de la commande
-     * * 0: supprimée annulée
      * * 1: en cours
      * * 2: validée (par le client)
      * * 3: prise en compte (restaurant)
