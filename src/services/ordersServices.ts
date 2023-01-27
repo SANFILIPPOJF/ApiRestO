@@ -7,8 +7,25 @@ import { Menu } from "../entities/menu";
 import { Timestamp } from "typeorm";
 
 
+/**
+ * Permet la gestion des requetes SQL orders.
+ * 
+ * * **getAll()**           : Récupération de toutes les commandes
+ * * **getById()**          : Récupération d'une commande
+ * * **getAllByUserId()**   : Récupération de toutes les commandes d'un user
+ * * **onStatus1()**        : Récupération de la seule commande ouverte par l'utilisateur
+ * * **new()**              : Création d'une nouvelle commande
+ * * **addMenu()**          : Ajout d'un ou plusieurs menus à une commande
+ * * **supMenu()**          : Suppression d'un ou plusieurs menus à une commande
+ * * **edit()**             : Modification du status d'une commande
+ * * **delete()**           : Suppression d'une commande
+ */
 export class OrdersServices {
 
+    /**
+     * Récupération de toutes les commandes
+     * @returns Toutes les commandes
+     */
     async getAll(): Promise<Order[]> {
         const orders = await Order.find(
             {
@@ -27,6 +44,30 @@ export class OrdersServices {
             })
         return orders
     }
+    
+    /**
+     * Récupération d'une commande
+     * @param id    l'id de la commande
+     * @returns     La commande recherchée si elle existe, sinon null
+     */
+    async getById(id: number): Promise<Order | null> {
+        return await Order.findOne({
+            relations: {
+                user: true,
+                resto: true,
+                lines: {
+                    menu: true
+                }
+            },
+            where : { id : id }
+        })
+    }
+
+    /**
+     * Récupération de toutes les commandes d'un user
+     * @param userId    L'id du User
+     * @returns         La liste des commandes du user
+     */
     async getAllByUserId(userId: number): Promise<Order[]> {
         const orders = await Order.find(
             {
@@ -45,35 +86,12 @@ export class OrdersServices {
             })
         return orders
     }
-    /*
-        async getValidateByRestoId() : Promise<Order[]>
-        {
-            const orders = await Order.find(
-                {
-    
-                    relations : {
-                        user : true ,
-                        resto : true,
-                        lines : {}
-                    }
-                }
-            ) ;
-            return orders
-        }
-    */
-    async getById(id: number): Promise<Order | null> {
-        return await Order.findOne({
-            relations: {
-                user: true,
-                resto: true,
-                lines: {
-                    menu: true
-                }
-            },
-            where : { id : id }
-        })
-    }
 
+    /**
+     * Récupération de la seule commande ouverte par l'utilisateur
+     * @param userId    L'id du user
+     * @returns         La commande ouverte
+     */
     async onStatus1(userId : number){
         return await Order.findOne(
             {
@@ -89,6 +107,12 @@ export class OrdersServices {
         )
     }
 
+    /**
+     * Création d'une nouvelle commande
+     * @param userId    id du propriétaire
+     * @param restoId   id du resto
+     * @returns         La commande nouvellement ouverte
+     */
     async new(userId: number, restoId: number): Promise<Order> {
         const order = new Order();
 
@@ -101,6 +125,13 @@ export class OrdersServices {
         return await order.save()
     }
 
+    /**
+     * Ajout d'un ou plusieurs menus à une commande
+     * @param userId            id du propriétaire de la commande
+     * @param menuId            id du menu à ajouter
+     * @param multiplicator     nombre de menu à ajouter
+     * @returns                 La commande complétée
+     */
     async addMenu(userId : number , menuId : number, multiplicator : number  ) {
         const currentOrder = await this.onStatus1(userId)
 
@@ -131,6 +162,13 @@ export class OrdersServices {
         return currentOrder
     }
 
+    /**
+     * Suppression d'un ou plusieurs menus à une commande
+     * @param userId            id du propriétaire de la commande
+     * @param menuId            id du menu à ajouter
+     * @param multiplicator     nombre de menu à supprimer
+     * @returns                 La commande complétée
+     */
     async supMenu(userId : number , menuId : number, multiplicator : number  ) {
         const currentOrder = await this.onStatus1(userId)
 
@@ -150,11 +188,18 @@ export class OrdersServices {
         }
         return await this.onStatus1(userId)
     }
-    /*  0: supprimée annulée ;
-        1: en cours ;
-        2: validée (par le client);
-        3: prise en compte (restaurant);
-        4: servie; */
+    
+    /**
+     * Modification du status d'une commande :
+     * * 1 : en cours
+     * * 2 : validée (par le client)
+     * * 3 : prise en compte (restaurant)
+     * * 4 : servie
+     * 
+     * @param id        id de la commande
+     * @param status    Le nouveau statut
+     * @returns         La commande complétée
+     */
     async edit(id: number, status: number): Promise<Order | null> {
         const order = await Order.findOneBy({ id: id })
         if (order && !order.served_at) {
@@ -193,6 +238,11 @@ export class OrdersServices {
         return order;
     }
 
+    /**
+     * Suppression d'une commande
+     * @param id    id de la commande
+     * @returns     1 si la commande à bien été supprimée, sinon 0
+     */
     async delete(id: number): Promise<number> {
         const order = await Order.findOneBy({ id: id })
         order?.remove()

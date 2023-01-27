@@ -6,10 +6,10 @@ import { Menu } from "../entities/menu";
  * Permet la gestion des requetes SQL orderlines.
  * 
  * * **getAll()**   : Récupération de tous les menus
- * * **getById()**   : Récupération d'un menu
- * * **new()**          : Ajout d'une ligne de commande
- * * **edit()**         : Modification d'une ligne de commande
- * * **delete()**       : Suppression d'une ligne de commande
+ * * **getById()**  : Récupération d'un menu
+ * * **new()**      : Ajout d'une ligne de commande
+ * * **edit()**     : Modification d'une ligne de commande
+ * * **delete()**   : Suppression d'une ligne de commande
  */
 export class MenuServices {
 
