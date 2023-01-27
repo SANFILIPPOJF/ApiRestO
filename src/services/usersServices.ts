@@ -38,4 +38,13 @@ export class UsersServices {
         user.password = hash;
         return await user.save();
     }
+
+    async upgradeAdminLvl(userId: number, adminLvl: number) : Promise<Users | null> {
+        const user = await Users.findOneBy({ id: userId })
+        if (user !== null) {
+            user.admin_lvl = adminLvl ;
+            await user.save() ;
+        }
+        return user;
+    }
 }
