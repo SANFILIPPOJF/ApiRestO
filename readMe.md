@@ -1,23 +1,81 @@
 # DOC API RESTO
 
-## Structure
+## Structure des reponses
 Toutes les reponses de l'API ont un **body** avec la même structure :
 
 ```json
 { 
 	"status"  : { code de statut } ,                // number 
 	"message" : { Information sur la reponse } ,    // string 
-    "data"    : { Les données }                     // decrit plus bas 
+    "data"    : { Les données }                     // detaillé pour chaque requete 
 }
 ```
-## Les requetes par niveaux d'admin
+## Structure des données récurrentes
 
+**{ USER DATA }**
+```json
+{ 
+    "id"        : { Identifiant de l'utilisateur } ,    // number 
+    "name"      : { Nom de l utilisateur } ,            // string 
+    "admin_lvl" : { Niveau d'Admin de l utilisateur }   // number 
+}
+```
+**{ RESTO DATA }**
+```json
+{ 
+    "id"    :  { Identifiant du commentaire }  ,    //number
+    "city"  :  { Nom de la ville }                  //string
+}
+```
+**{ MENU DATA}**
+```json
+{ 
+    "id"    :   { Identifiant du menu }  ,  //number
+    "name"  :   { Nom du menu }  ,          //string
+    "price" :   { Prix du menu }            //number
+}
+```
+**{ ORDER DATA }**
+```json
+{ 
+    "id"            : { identifiant de la commande } ,  // number 
+    "status"        : { Etat de la commande } ,         // number   
+    "created_at"    : { Date de création } ,            // date 
+    "validated_at"  : { Date de validation } ,          // date 
+    "checked_at"    : { Date de prise en compte } ,     // date
+    "served_at"     : { Date de livraison },            // date
+}
+```
+**{ ORDERLINE DATA }**
+```json
+{ 
+    "id" :            { identifiant de la ligne de commande } , // number 
+    "multiplicator" : { multiplicateur du menu } ,              // number
+}
+```
+## Les differents états d'une commande
+
+    * Etat de la commande
+    - 1: en cours
+    - 2: validée (par le client)
+    - 3: prise en compte (restaurant)
+    - 4: servie 
+
+## Les niveaux d'admin
 Les niveaux d'admin permettent d'acceder à differentes requetes.
-Bien sur avoir un niveau d'admin superieur à 0 permet quand meme d'acceder aux requetes de niveau inférieur. 
-* * *
-### Visiteur (non loggé)
+Bien sur avoir un niveau d'admin superieur à 0 permet quand meme d'acceder aux requetes de niveau inférieur.
 
-#### voir les restaurants
+    * Niveau d'admin du user
+    -   : Visiteur
+    - 0 : Client loggé
+    - 1 : Caisse
+    - 2 : Admin
+
+* * *
+# Les requetes par niveau d'admin
+## Visiteur (non loggé)
+
+### voir les restaurants
 ```
 GET /api/restos/
 ```
@@ -26,8 +84,7 @@ response body data
 { 
     "data"    : [
         {
-            "id"    :  { Identifiant du commentaire }  ,    //number
-            "city"  :  { Nom de la ville }                  //string
+            { RESTO DATA }  // tableau des données de chaque restaurant
         },
         ...
     ]
@@ -42,9 +99,7 @@ response body data
 { 
     [
         {
-            "id"    :   { Identifiant du menu }  ,  //number
-            "name"  :   { Nom du menu }  ,          //string
-            "price" :   { Prix du menu }            //number
+            { MENU DATA }   // tableau des données de chaque menu
         },
         ...
     ]
@@ -57,21 +112,19 @@ POST /api/users/
 resquest body
 ```json
 { 
-	"pass" : { Mot de passe } ,         // string 
-	"name" : { Nom de l utilisateur }   // string 
+	"name"     : { Nom de l utilisateur },   // string
+    "password" : { Mot de passe }            // string 
 }
 ```
 response body data
 ```json
 { 
-    "id"        : { Identifiant de l'utilisateur } ,    // number 
-    "name"      : { Nom de l utilisateur } ,            // string 
-    "admin_lvl" : { Niveau d'Admin de l utilisateur }   // number 
+    { USER DATA }   // données du user créé
 }
 ```
 * se logger
 
-Authentification d'un utilisateur. Fourni le **Bearer Token** d'Authentification nécessaire pour les requetes marquées **(#)**
+Authentification d'un utilisateur. Fourni un **Bearer Token** d'authentification nécessaire pour les requetes à partir du niveau d'admin 0 (client loggé)
 
 ```
 POST /api/users/login/
@@ -88,16 +141,14 @@ POST /api/users/login/
 
 ```json
 {
-    "id"        : { identifiant de l'utilisateur } ,    // number 
-    "name"      : { Nom de l utilisateur } ,            // string 
-    "admin_lvl" : { Niveau d'Admin de l utilisateur } , // number 
-    "token"     : { Token d'Authentification }          // string 
+    { USER DATA },                          // données du user connecté
+    "token" : { Token d'Authentification }  // string 
 }
 ```
 * * *
 ### Client (loggé adminLvl 0)
 
-* voir ses commandes et leur statut    // user(loggé) => getDataById
+* voir ses commandes et leur statut
 
 ```
 GET /api/users/
@@ -106,45 +157,91 @@ GET /api/users/
 
 ```json
 {
-    "id"        : { identifiant de l'utilisateur } ,    // number 
-    "name"      : { Nom de l utilisateur } ,            // string 
-    "admin_lvl" : { Niveau d'Admin de l utilisateur } , // number 
-    "orders"    : [
+    { USER DATA },  // données du User effectuant connecté effectuant la demande
+    "orders" : [
         {
-            "id"            : { identifiant de la commande } ,    // number 
-            "status"        : { Etat de la commande } ,           // number   
-            "created_at"    : { Date de création } ,              // date 
-            "validated_at"  : { Date de validation } ,            // date 
-            "checked_at"    : { Date de prise en compte } ,       // date
-            "served_at"     : { Date de livraison },              // date
-            "lines"         : [
-
-            ]
+            { ORDER DATA }, // tableau de ses commandes
+            "lines" : [
+                {
+                    { ORDERLINE DATA }, // tableau des lignes de chaque commande
+                    "menu" : {
+                        { MENU DATA }   // données menu lié a chaque ligne de commande
+                    }
+                },
+                ...
+            ],
+            "resto"         : {
+                { RESTO DATA } // Données du resto lié a la commande
+                }
         },
         ...
     ]
-        { Token d'Authentification }          // string 
 }
 ```
-* Etats d'une commande
-    * 1: en cours
-    * 2: validée (par le client)
-    * 3: prise en compte (restaurant)
-    * 4: servie (non modifiable)
+* creer une commande (statut = 1)
 
+si l'utilisateur a deja une commande en cours la requete retourne **cette** commande
 
-* creer une commande (s'il n'y en a pas deja en cours) (statut = 1)
-    * ajouter un menu a une commande
-    * supprimer un menu d'une commande
-    * annuler la commande en cours (statut < 2)
-* valider une commande (statut = 2)
-* annuler une commande validée (statut < 3)
+```
+POST /api/orders/
+```
+**Request body** 
+
+```json
+{
+	"restoId" : { Identifiant du restorant },   // number
+}
+```
+**Response body data**
+
+```json
+{
+    { ORDER DATA },     // données de la commande crée
+    "user" :    {
+        { USER DATA }   // User ayant créé la commande
+    },
+    "resto" :   {
+        { RESTO DATA }  // Resto lié à la commande
+    }
+}
+```
+- ajouter un menu a une commande
+```
+PUT /api/users/orders/addMenu/:idMenu
+```
+**Request body** 
+
+```json
+{
+	"userId" :  { Identifiant de l'utilisateur },   // string
+	"mult" :    { Multiplicateur du menu }          // number
+}
+```
+**Response body data**
+
+```json
+{
+    { ORDER DATA },     // données de la commande concernée
+    "user" :    {
+        { USER DATA }   // User ayant créé la commande
+    },
+    "lines" :[
+        {
+            { ORDERLINE DATA }  // tableau des lignes de la commande
+        }
+    ],
+ // manque le resto   ??? 
+}
+```
+- supprimer un menu d'une commande
+* valider une commande (statut commande = 2)
+* annuler une commande validée (si statut commande < 3)
 * * *
 ### Caisse (loggé adminLvl 1)
 
 * voir les commandes d'un client (order => getAllByUserId)
-* prendre en compte la commande (statut = 3)
-* servir une commande (statut = 4)
+* prendre en compte la commande (statut commande = 3)
+* servir une commande (statut commande = 4)
 * * *
 ### Gestionnaire (loggé adminLvl 2)
 
