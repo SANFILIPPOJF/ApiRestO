@@ -12,8 +12,17 @@ import { Users } from '../entities/user';
 dotenv.config()                                             // token
 const accessTokenSecret = process.env.SECRET_TOKEN!;       // token
 const usersServices = new UsersServices();
+
+/**
+ * Class permettant le contrôle des données entrantes pour les requête User
+ * * **.getById()**         : Récupération d'un User avec son id
+ * * **.register()**        : Création d'un User
+ * * **.login()**           : Authentification d'un User, fourni le token
+ * * **.changeAdminLvl()**  : Changement du niveau d'admin d'un user
+ */
 export class UsersController {
 
+    /** Récupération d'un User avec son id */
     async getById(req: Request, res: Response) {
         const responser = new Responser<Users>(req, res);
         const userId = req.body.userId!;
@@ -37,6 +46,8 @@ export class UsersController {
             responser.send();
         }
     }
+
+    /** Création d'un User */
     async register(req: Request, res: Response) {
         const responser = new Responser<TDataPartialUser>(req, res);
         const { name, password } = req.body;
@@ -77,6 +88,7 @@ export class UsersController {
         })
     }
 
+    /** Authentification d'un User, fourni le token */
     async login(req: Request, res: Response) {
         const responser = new Responser<TDataToken>(req, res);
         const { name, password } = req.body;
@@ -130,37 +142,38 @@ export class UsersController {
         }
     }
 
-        async changeAdminLvl(req: Request, res: Response) {
-            const responser = new Responser<Users>(req, res);
-            const userLvl = req.params.lvl;
-            const idToUpgrade = req.params.idToUpgrade;
+    /** Changement du niveau d'admin d'un user */
+    async changeAdminLvl(req: Request, res: Response) {
+        const responser = new Responser<Users>(req, res);
+        const userLvl = req.params.lvl;
+        const idToUpgrade = req.params.idToUpgrade;
 
-            if (faillingId(userLvl) || faillingId(idToUpgrade) || Number(userLvl) > 2) {
-                responser.status = 400;
-                responser.message = `Structure incorrecte : users/:idToUpgrade : number /:userLvl : number `;
+        if (faillingId(userLvl) || faillingId(idToUpgrade) || Number(userLvl) > 2) {
+            responser.status = 400;
+            responser.message = `Structure incorrecte : users/:idToUpgrade : number /:userLvl : number `;
+            responser.send();
+            return;
+        }
+
+        try {
+            const user = await usersServices.upgradeAdminLvl(Number(idToUpgrade), Number(userLvl));
+
+            if (!user) {
+                responser.status = 404;
+                responser.message = `Ce User n'existe pas`;
                 responser.send();
                 return;
             }
-            
-            try {
-                const user = await usersServices.upgradeAdminLvl(Number(idToUpgrade),Number(userLvl));
-                
-                if(!user){
-                    responser.status = 404;
-                    responser.message = `Ce User n'existe pas`;
-                    responser.send();
-                    return;
-                }
 
-                responser.status = 200;
-                responser.message = `nouveau niveau admin de ${user.name} est ${user.admin_lvl}`;
-                responser.data = user;
-                responser.send();
+            responser.status = 200;
+            responser.message = `nouveau niveau admin de ${user.name} est ${user.admin_lvl}`;
+            responser.data = user;
+            responser.send();
 
-            } catch (err: any) {
-                console.log(err.stack)
-                responser.send();
-            }
+        } catch (err: any) {
+            console.log(err.stack)
+            responser.send();
         }
+    }
 
 }

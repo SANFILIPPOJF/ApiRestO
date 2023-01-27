@@ -6,7 +6,17 @@ import { faillingId, faillingPrice, faillingString } from '../module/faillingTes
 
 const menuServices = new MenuServices()
 
+/**
+ * Class permettant le contrôle des données entrantes pour les requête Menu
+ * * **.getAll()**    : Récupération de tous les Menu
+ * * **.getById()**   : Récupération d'un Menu avec son id
+ * * **.new()**       : Création d'un Menu
+ * * **.edit()**      : Modification d'un Menu
+ * * **.delete()**    : Suppression d'un Menu 
+ */
 export class MenusController {
+
+    /** Récupération de tous les Menu */
     async getAll(req: Request, res: Response) {
 
         const responser = new Responser<Menu[]>(req, res);
@@ -24,6 +34,8 @@ export class MenusController {
             responser.send();
         }
     }
+
+    /** Récupération d'un Menu */
     async getById(req: Request, res: Response) {
         const responser = new Responser<Menu>(req, res);
 
@@ -58,6 +70,7 @@ export class MenusController {
         }
     }
 
+    /** Création d'un Menu */
     async new(req: Request, res: Response) {
         const responser = new Responser<Menu>(req, res);
 
@@ -84,6 +97,8 @@ export class MenusController {
             responser.send();
         }
     }
+
+    /** Modification d'un Menu */
     async edit(req: Request, res: Response) {
         const responser = new Responser<Menu>(req, res);
 
@@ -125,6 +140,8 @@ export class MenusController {
         }
 
     }
+
+    /** Suppression d'un Menu */
     async delete(req: Request, res: Response) {
         const responser = new Responser<number>(req, res);
 

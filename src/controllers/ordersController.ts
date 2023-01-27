@@ -8,13 +8,21 @@ import { faillingBool, faillingId, faillingPrice, faillingString } from '../modu
 
 const ordersServices = new OrdersServices()
 const restosServices = new RestosServices()
-export class OrdersController {
-/*
-    async getFullById(req: Request, res: Response){
-        const responser = new Responser<Order>(req, res);
-        responser.data?.lines
-    }*/
 
+/**
+ * Class permettant le contrôle des données entrantes pour les requête Order
+ * * **.getAll()**          : Récupération de toutes les Commandes
+ * * **.getById()**         : Récupération d'une Commandes avec son id
+ * * **.getAllByUserId()**  : Récupération d'une Commandes avec son id
+ * * **.new()**             : Création d'une Commandes
+ * * **.edit()**            : Modification d'une Commandes
+ * * **.addMenu()**         : Ajout d'un menu à une Commandes
+ * * **.supMenu()**         : Suppression d'un menu d'une Commandes
+ * * **.delete()**          : Suppression d'une Commandes 
+ */
+export class OrdersController {
+
+    /** Récupération de toutes les Commandes */
     async getAll(req: Request, res: Response) {
 
         const responser = new Responser<Order[]>(req, res);
@@ -32,24 +40,8 @@ export class OrdersController {
             responser.send();
         }
     }
-    async getAllByUserId(req: Request, res: Response) {
-        const responser = new Responser<Order[]>(req, res);
-        const {userId} = req.body
 
-        try {
-            const data = await ordersServices.getAllByUserId(userId);
-
-            responser.status = 200;
-            responser.message = `Récupération de toutes les commandes`;
-            responser.data = data;
-            responser.send();
-        }
-        catch (err: any) {
-            console.log(err.stack)
-            responser.send();
-        }
-    }
-
+    /** Récupération d'une Commandes avec son id */
     async getById(req: Request, res: Response) {
         const responser = new Responser<Order>(req, res);
         const { userId, adminLvl } = req.body
@@ -91,7 +83,27 @@ export class OrdersController {
             responser.send();
         }
     }
+    
+    /** Récupération de toutes les Commandes d'un utilisateur */
+    async getAllByUserId(req: Request, res: Response) {
+        const responser = new Responser<Order[]>(req, res);
+        const {userId} = req.body
 
+        try {
+            const data = await ordersServices.getAllByUserId(userId);
+
+            responser.status = 200;
+            responser.message = `Récupération de toutes les commandes`;
+            responser.data = data;
+            responser.send();
+        }
+        catch (err: any) {
+            console.log(err.stack)
+            responser.send();
+        }
+    }
+
+    /** Création d'une Commandes */
     async new(req: Request, res: Response) {
         const responser = new Responser<Order>(req, res);
         const {userId ,restoId} = req.body
@@ -132,11 +144,12 @@ export class OrdersController {
             responser.send();
         }
     }
-    
+
+    /** Modification d'une Commandes */
     async edit(req: Request, res: Response) {
         const responser = new Responser<Order>(req, res);
-        const { status , userId , adminLvl }  = req.body ;
-        const orderId = req.params.id   ;
+        const { status , userId , adminLvl } = req.body ;
+        const orderId = req.params.id ;
 
         if (faillingId(orderId) || faillingId(status))
         {
@@ -188,6 +201,8 @@ export class OrdersController {
         }
 
     }
+    
+    /** Ajout d'un menu à une Commandes */
     async addMenu(req: Request, res: Response) {
         const responser = new Responser<Order>(req, res);
         const menuId = req.params.idMenu;
@@ -223,7 +238,8 @@ export class OrdersController {
             responser.send();
         }
     }
-
+    
+    /** Suppression d'un menu à une Commandes */
     async supMenu(req: Request, res: Response) {
         const responser = new Responser<Order>(req, res);
         const menuId = req.params.idMenu;
@@ -259,6 +275,8 @@ export class OrdersController {
             responser.send();
         }
     }
+    
+    /** Suppression d'une Commandes */
     async delete(req: Request, res: Response) {
         const responser = new Responser<number>(req, res);
 

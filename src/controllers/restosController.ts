@@ -6,12 +6,25 @@ import { Resto } from '../entities/resto';
 
 
 const restosServices = new RestosServices();
+
+/**
+ * Class permettant le contrôle des données entrantes pour les requête Resto
+ * * **.getAll()**    : Récupération de tous les Resto
+ * * **.getBy()**     : Récupération d'un Resto avec son id ou son nom
+ * * **.getById()**   : Récupération d'un Resto avec son id
+ * * **.getByCity()** : Récupération d'un Resto avec son nom
+ * * **.add()**       : Création d'un Resto
+ * * **.edit()**      : Modification d'un Resto
+ * * **.delete()**    : Suppression d'un Resto 
+ */
 export class RestosController {
     constructor (){
         this.getBy = this.getBy.bind(this)
         this.getById = this.getById.bind(this)
         this.getByCity = this.getByCity.bind(this)
     }
+
+    /** Récupération de tous les Resto */
     async getAll(req: Request, res: Response) {
         const responser = new Responser<Resto[]>(req, res);
 
@@ -29,6 +42,7 @@ export class RestosController {
         }
     }
 
+    /** Récupération d'un Resto avec son id ou son nom */
     async getBy(req: Request, res: Response) {
         const responser = new Responser<Resto>(req, res);
         const restoParam = req.params.param;
@@ -51,6 +65,8 @@ export class RestosController {
             responser.send();
         }
     }
+
+    /** Récupération d'un Resto avec son id */
     getById = async (req: Request, res: Response) => {
         const responser = new Responser<Resto>(req, res);
         const restoId = req.params.param;
@@ -77,6 +93,7 @@ export class RestosController {
         }
     }
 
+    /** Récupération d'un Resto avec son nom */
     async getByCity(req: Request, res: Response) {
         const responser = new Responser<Resto>(req, res);
         const restoCity = req.params.param;
@@ -102,6 +119,7 @@ export class RestosController {
         }
     }
 
+    /** Création d'un Resto */
     async add(req: Request, res: Response) {
         const responser = new Responser<Resto>(req, res);
         const city = req.body.city;
@@ -124,6 +142,8 @@ export class RestosController {
             responser.send();
         }
     }
+
+    /** Modification d'un Resto */
     async edit(req: Request, res: Response) {
         const responser = new Responser<Resto>(req, res);
 
@@ -161,6 +181,8 @@ export class RestosController {
             responser.send();
         }
     }
+
+    /** Suppression d'un Resto */
     async delete(req: Request, res: Response) {
         const responser = new Responser<number>(req, res);
 

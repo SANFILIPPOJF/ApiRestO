@@ -10,7 +10,16 @@ import { OrdersServices } from '../services/ordersServices';
 const linesServices = new LinesServices()
 const ordersServices = new OrdersServices()
 
+/**
+ * Class permettant le contrôle des données entrantes pour les requête OrderLine
+ * * **.getFromOrder()**    : Récupération d'Orderline depuis l'id d'une commande 
+ * * **.new()**             : Création d'une Orderline
+ * * **.edit()**            : Modification d'une Orderline
+ * * **.delete()**          : Suppression d'une Orderline
+ */
 export class LinesController {
+
+    /** Récupération d'Orderline depuis l'id d'une commande */
     async getFromOrder(req: Request, res: Response) {
 
         const responser = new Responser<OrderLine[]>(req, res);
@@ -41,6 +50,8 @@ export class LinesController {
             responser.send();
         }
     }
+
+    /** Création d'une Orderline */
     async new(req: Request, res: Response) {
         const responser = new Responser<OrderLine>(req, res);
 
@@ -66,6 +77,8 @@ export class LinesController {
             responser.send();
         }
     }
+
+    /** Modification d'une Orderline */
     async edit(req: Request, res: Response) {
         const responser = new Responser<OrderLine>(req, res);
 
@@ -108,6 +121,8 @@ export class LinesController {
         }
 
     }
+
+    /** Suppression d'une Orderline */
     async delete(req: Request, res: Response) {
         const responser = new Responser<number>(req, res);
 
