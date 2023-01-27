@@ -21,4 +21,4 @@
 # Gestionnaire (loggé adminLvl 2)
 * CRUD des restaurants
 * CRUD des menus
-- changer le niveau d'admin
+* changer le niveau d'admin
