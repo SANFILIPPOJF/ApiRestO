@@ -4,10 +4,12 @@ import { RestosServices } from '../services/restosServices';
 import { Order } from '../entities/order';
 import { Responser } from '../module/Responser';
 import { faillingBool, faillingId, faillingPrice, faillingString } from '../module/faillingTest';
+import { UsersServices } from '../services/usersServices';
 
 
 const ordersServices = new OrdersServices()
 const restosServices = new RestosServices()
+const usersServices = new UsersServices();
 
 /**
  * Class permettant le contrôle des données entrantes pour les requête Order
@@ -84,12 +86,58 @@ export class OrdersController {
         }
     }
     
+    /** Récupération de toutes les Commandes d'un resto */
+    async getAllByRestoId(req: Request, res: Response) {
+        const responser = new Responser<Order[]>(req, res);
+        const restoId = parseInt(req.params.id);
+        if (faillingId(restoId))
+        {
+            responser.status = 400 ;
+            responser.message = `Stucture incorrecte { id : ${restoId} n'est pas un nombre entier}` ;
+            responser.send() ;
+            return ;
+        }
+        try {
+            const verifyResto = await restosServices.getRestoById(restoId) ;
+            if (!verifyResto){
+                responser.status = 404 ;
+                responser.message = `Ce resto n'existe pas` ;
+                responser.send() ;
+                return ;
+            }
+            const data = await ordersServices.getAllByRestoId(restoId);
+
+            responser.status = 200;
+            responser.message = `Récupération de toutes les commandes du resto ${restoId}`;
+            responser.data = data;
+            responser.send();
+        }
+        catch (err: any) {
+            console.log(err.stack)
+            responser.send();
+        }
+    }
+
     /** Récupération de toutes les Commandes d'un utilisateur */
     async getAllByUserId(req: Request, res: Response) {
         const responser = new Responser<Order[]>(req, res);
-        const {userId} = req.body
+        const userId = parseInt(req.params.id)
+        
+        if (faillingId(userId)) {
+            responser.status = 400;
+            responser.message = `Structure du body incorrect : { id : integer }`;
+            responser.send();
+            return;
+        }
 
         try {
+            const userData = await usersServices.getDataById(userId)!;
+            if (!userData) {
+                responser.status = 404;
+                responser.message = `User n'existe pas`;
+                responser.send();
+                return;
+            }
             const data = await ordersServices.getAllByUserId(userId);
 
             responser.status = 200;
@@ -130,6 +178,7 @@ export class OrdersController {
                 responser.message = `Une commande est déjà ouverte`;
                 responser.data = oldOrder;
                 responser.send();
+                return;
             }
 
             const data = await ordersServices.new(userId , restoId );
@@ -148,13 +197,13 @@ export class OrdersController {
     /** Modification d'une Commandes */
     async edit(req: Request, res: Response) {
         const responser = new Responser<Order>(req, res);
-        const { status , userId , adminLvl } = req.body ;
+        const { userId , adminLvl } = req.body ;
         const orderId = req.params.id ;
 
-        if (faillingId(orderId) || faillingId(status))
+        if (faillingId(orderId))
         {
             responser.status = 400 ;
-            responser.message = `Stucture incorrecte : /${orderId} : integer  { status : ${status} n'est pas un nombre entier }` ;
+            responser.message = `Stucture incorrecte : /${orderId} : integer ` ;
             responser.send() ;
             return ;
         }
@@ -166,7 +215,7 @@ export class OrdersController {
                 responser.message = `Cette commande n'existe pas` ;
                 responser.send() ;
                 return ;
-            } 
+            }
             if (verifyOrder.user.id !== userId && adminLvl == 0) 
             {
                 responser.status = 403 ;
@@ -184,11 +233,11 @@ export class OrdersController {
             if (verifyOrder.status > 1 && adminLvl == 0 ) 
             {
                 responser.status = 403 ;
-                responser.message = `Vous ne pouvais plus modifier cette commande` ;
+                responser.message = `Vous ne pouvez plus modifier cette commande` ;
                 responser.send() ;
                 return ;
             } 
-            const data = await ordersServices.edit(Number(orderId) , status);
+            const data = await ordersServices.edit(Number(orderId) , verifyOrder.status+1);
 
             responser.status = 200;
             responser.message = `Modification de la commande ${orderId}`;
@@ -266,7 +315,7 @@ export class OrdersController {
             } 
 
             responser.status = 200;
-            responser.message = `Retrait du Menu ${menuId} à la commande ${data.id}`;
+            responser.message = `Retrait de ${multiplicator} Menu ${menuId} à la commande ${data.id}`;
             responser.data = data;
             responser.send();
         }
@@ -299,7 +348,6 @@ export class OrdersController {
                 responser.send() ;
                 return ;
             } 
-
             responser.status = 200;
             responser.message = `Suppression de la commande ${orderId}`;
             responser.data = data;

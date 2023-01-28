@@ -68,6 +68,30 @@ export class OrdersServices {
      * @param userId    L'id du User
      * @returns         La liste des commandes du user
      */
+async getAllByRestoId(restoId: number): Promise<Order[]> {
+    const orders = await Order.find(
+        {
+            relations: {
+                user: true,
+                resto: true,
+                lines: {
+                    menu: true
+                }
+            },
+            where : {
+                resto : {
+                    id : restoId
+                }
+            }
+        })
+    return orders
+}
+
+    /**
+     * Récupération de toutes les commandes d'un user
+     * @param userId    L'id du User
+     * @returns         La liste des commandes du user
+     */
     async getAllByUserId(userId: number): Promise<Order[]> {
         const orders = await Order.find(
             {
@@ -97,7 +121,8 @@ export class OrdersServices {
             {
                 relations : { 
                     user : true ,
-                    lines : {menu : true}
+                    lines : {menu : true},
+                    resto : true
                 },
                 where : { 
                     user : {id : userId},
@@ -204,32 +229,18 @@ export class OrdersServices {
         const order = await Order.findOneBy({ id: id })
         if (order && !order.served_at) {
             switch (status) {
-                case 0:
-                    order.status=0;
-                    await order.save();
-                    await order.remove();
-                    break;
-                case 1:
-                    order.status=1;
-                    order.validated_at=null;
-                    order.checked_at=null;
-                    await order.save();
-                    break;
                 case 2:
                     order.status=2;
                     order.validated_at=new Date(Date.now()) ;
-                    order.checked_at=null;
                     await order.save();
                     break;
                 case 3:
                     order.status=3;
-                    if (!order.validated_at) {
-                        order.validated_at=new Date(Date.now()) ;
-                    }
                     order.checked_at=new Date(Date.now()) ;
                     await order.save();
                     break;
-                default:
+                case 4:
+                    order.status=4;
                     order.served_at=new Date(Date.now()) ;
                     await order.save();
                     break;
@@ -239,13 +250,26 @@ export class OrdersServices {
     }
 
     /**
-     * Suppression d'une commande
+     * Suppression d'une commande et de ses lignes
      * @param id    id de la commande
      * @returns     1 si la commande à bien été supprimée, sinon 0
      */
     async delete(id: number): Promise<number> {
-        const order = await Order.findOneBy({ id: id })
-        order?.remove()
+        const order = await Order.findOne(
+            {
+                relations : { 
+                    lines : {menu : true}
+                },
+                where : {id : id}
+            }
+        )
+        if (order){
+            for (let i=0; i<order.lines.length;i++){
+                const line = await OrderLine.findOneBy({ id: order.lines[i].id })
+                line?.remove()
+            }
+            order?.remove()
+        }
         return order ? 1 : 0;
     }
 }
