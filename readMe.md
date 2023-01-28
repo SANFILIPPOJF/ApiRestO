@@ -207,7 +207,7 @@ POST /api/orders/
 ```
 - ajouter un menu a une commande
 ```
-PUT /api/users/orders/addMenu/:idMenu
+PUT /api/orders/addMenu/:idMenu
 ```
 **Request body** 
 
@@ -230,21 +230,121 @@ PUT /api/users/orders/addMenu/:idMenu
             { ORDERLINE DATA }  // tableau des lignes de la commande
         }
     ],
- // manque le resto   ??? 
+    { RESTO DATA}       // resto lié a la commande
 }
 ```
 - supprimer un menu d'une commande
-* valider une commande (statut commande = 2)
-* annuler une commande validée (si statut commande < 3)
+```
+PUT /api/orders/supMenu/:idMenu
+```
+**Request body** 
+
+```json
+{
+	"userId" :  { Identifiant de l'utilisateur },   // string
+	"mult" :    { Multiplicateur du menu }          // number
+}
+```
+**Response body data**
+
+```json
+{
+    { ORDER DATA },     // données de la commande concernée
+    "user" :    {
+        { USER DATA }   // User ayant créé la commande
+    },
+    "lines" :[
+        {
+            { ORDERLINE DATA }  // tableau des lignes de la commande
+        }
+    ],
+    { RESTO DATA}       // resto lié a la commande
+}
+```
+* faire evoluer le statut d'une commande
+
+Un utilisateur loggé a la possibilité de faire evoluer le statut de sa commande en cours. 
+```
+PUT /api/orders/:orderId   
+```
+**Response body data**
+
+```json
+{
+    { ORDER DATA },     // données de la commande dont le statut a evolué
+}
+```
+* Supprimer une commande
+
+ L'utilisateur peut supprimer sa commande en cours si celle ci n'etait pas déja prise en compte (statut < 3)
+```
+PUT /api/orders/:orderId   
+```
+**Response body data**
+
+```json
+{
+    boolean     // 1 : commande supprimée
+}
+```
 * * *
 ### Caisse (loggé adminLvl 1)
 
-* voir les commandes d'un client (order => getAllByUserId)
-* prendre en compte la commande (statut commande = 3)
-* servir une commande (statut commande = 4)
+* voir les commandes d'un client
+```
+GET /api/orders/byUser/:id   
+```
+**Response body data**
+
+```json
+{
+    { ORDER DATA },     // tableau des commandes du client
+    { USER DATA },
+    { RESTO DATA },
+    lines : {
+        { ORDERLINE DATA}
+    }   
+},
+...
+
+```
+* voir les commandes d'un resto
+```
+GET /api/orders/byResto/:id   
+```
+**Response body data**
+
+```json
+{
+    { ORDER DATA },     // tableau des commandes du resto
+    { USER DATA },
+    { RESTO DATA },
+    lines : {
+        { ORDERLINE DATA}
+    }   
+},
+...
+
+```
+* prendre en compte la commande et servir une commande ce font avec la meme requete (voir details  ***faire evoluer le statut d'une commande***)
+
+```
+PUT /api/orders/:orderId   
+```
 * * *
+
 ### Gestionnaire (loggé adminLvl 2)
 
 * CRUD des restaurants
 * CRUD des menus
 * changer le niveau d'admin
+```
+PUT /api/users/admin/:userId/:adminLvl   
+```
+**Response body data**
+
+```json
+{
+    { USER DATA }     // Donnees du user mise à jour
+}
+```
