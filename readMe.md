@@ -335,8 +335,104 @@ PUT /api/orders/:orderId
 
 ### Gestionnaire (loggé adminLvl 2)
 
-* CRUD des restaurants
-* CRUD des menus
+#### CRUD des restaurants
+* Ajouter un restaurant
+```
+POST /api/users/restos   
+```
+**Request body** 
+
+```json
+{
+	"city" :  { Ville du restaurant },   // string
+}
+```
+**Response body data**
+
+```json
+{
+    { RESTO DATA }      // données du restaurant ajouté 
+}
+```
+* Modifier un restaurant
+```
+PUT /api/users/restos/:id
+```
+**Request body** 
+
+```json
+{
+	"city" :  { Nouveau nom de la ville }   // string
+}
+```
+**Response body data**
+
+```json
+{
+    { RESTO DATA }      // données du restaurant modifié 
+}
+```
+* Supprimer un restaurant
+```
+DELETE /api/users/restos/:id  
+```
+**Response body data**
+
+```json
+{
+    boolean      // 1 : restaurant supprimé 
+}
+```
+#### CRUD des menus
+* Ajouter un menu
+```
+POST /api/users/menus   
+```
+**Request body** 
+
+```json
+{
+	"name" :  { nom du menu },      // string
+    "price" : { prix du menu }      // 0 < number < 999.99
+}
+```
+**Response body data**
+
+```json
+{
+    { MENU DATA }      // données du menu ajouté 
+}
+```
+* Modifier un menu
+```
+PUT /api/users/menus/:id
+```
+**Request body** 
+
+```json
+{
+	"name" :  { Nouveau nom du menu },   // string
+    "price":  { nouveau prix }           // 0 < number < 999.99
+}
+```
+**Response body data**
+
+```json
+{
+    { MENU DATA }      // données du menu modifié 
+}
+```
+* Supprimer un menu
+```
+DELETE /api/users/menus/:id  
+```
+**Response body data**
+
+```json
+{
+    boolean      // 1 : menu supprimé 
+}
+```
 * changer le niveau d'admin
 ```
 PUT /api/users/admin/:userId/:adminLvl   
