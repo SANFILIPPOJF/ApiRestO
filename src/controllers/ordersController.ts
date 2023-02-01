@@ -233,7 +233,7 @@ export class OrdersController {
             if (verifyOrder.status > 1 && adminLvl == 0 ) 
             {
                 responser.status = 403 ;
-                responser.message = `Vous ne pouvais plus modifier cette commande` ;
+                responser.message = `Vous ne pouvez plus modifier cette commande` ;
                 responser.send() ;
                 return ;
             } 
