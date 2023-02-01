@@ -197,13 +197,13 @@ export class OrdersController {
     /** Modification d'une Commandes */
     async edit(req: Request, res: Response) {
         const responser = new Responser<Order>(req, res);
-        const { userId , adminLvl } = req.body ;
+        const { status , userId , adminLvl } = req.body ;
         const orderId = req.params.id ;
 
-        if (faillingId(orderId))
+        if (faillingId(orderId) || faillingId(status))
         {
             responser.status = 400 ;
-            responser.message = `Stucture incorrecte : /${orderId} : integer ` ;
+            responser.message = `Stucture incorrecte : /${orderId} : integer  { status : ${status} n'est pas un nombre entier }` ;
             responser.send() ;
             return ;
         }
@@ -215,7 +215,7 @@ export class OrdersController {
                 responser.message = `Cette commande n'existe pas` ;
                 responser.send() ;
                 return ;
-            }
+            } 
             if (verifyOrder.user.id !== userId && adminLvl == 0) 
             {
                 responser.status = 403 ;
@@ -233,11 +233,11 @@ export class OrdersController {
             if (verifyOrder.status > 1 && adminLvl == 0 ) 
             {
                 responser.status = 403 ;
-                responser.message = `Vous ne pouvez plus modifier cette commande` ;
+                responser.message = `Vous ne pouvais plus modifier cette commande` ;
                 responser.send() ;
                 return ;
             } 
-            const data = await ordersServices.edit(Number(orderId) , verifyOrder.status+1);
+            const data = await ordersServices.edit(Number(orderId) , status);
 
             responser.status = 200;
             responser.message = `Modification de la commande ${orderId}`;
